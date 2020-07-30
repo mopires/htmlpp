@@ -46,7 +46,7 @@ HTMLpp
     
     body
 
-        div class='container' id='main' comentario
+        div class='container' id='main'
             
             div class='row' id='main'
 
