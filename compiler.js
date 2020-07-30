@@ -113,7 +113,7 @@ function Parser(tokens = null){
                 line = '<meta ' + tokens.props['charset'] + ' />';
                 break;
             case 'title':
-                line = '<title>' + tokens.props['value'].replace("'", "") + '</title>'
+                line = '<title>' + formatValue(tokens.props['value']) + '</title>'
                 break;
             case 'style':
                 line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
@@ -131,10 +131,10 @@ function Parser(tokens = null){
                 line = '</div>';
                 break;
             case 'a':
-                line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + tokens.props['value'] + '</a>';
+                line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + formatValue(tokens.props['value']) + '</a>';
                 break;
             case 'p':
-                line = '<p>' + tokens.props['value'] + '</p>';
+                line = '<p>' + formatValue(tokens.props['value']) + '</p>';
                 break;
             
         }
@@ -143,3 +143,10 @@ function Parser(tokens = null){
     return line;
 
 }
+
+function formatValue(value){
+    
+    return value.replace("'", "").replace("'", "");
+
+}
+
