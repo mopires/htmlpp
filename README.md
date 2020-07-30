@@ -1,2 +1,3 @@
 # htmlpp transpiler
-Modern way to write html. Like... pre-processor... no "&lt; > &lt;/>" just text
+
+Modern way to write html. The concept remains the same, but without the "&lt; > &lt;/>" 
