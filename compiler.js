@@ -131,7 +131,8 @@ function Parser(tokens = null){
                 line = '</div>';
                 break;
             case 'a':
-                line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + formatValue(tokens.props['value']) + '</a>';
+                line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + 
+                        formatValue(tokens.props['value']) + '</a>';
                 break;
             case 'p':
                 line = '<p>' + formatValue(tokens.props['value']) + '</p>';
