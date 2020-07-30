@@ -9,7 +9,7 @@ HTML
 
 <html>
   <head>
-    <meta 'utf-8' />
+    <meta charset='utf-8' />
     <title>My title'</title>
     <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css' />
   </head>
@@ -30,9 +30,8 @@ HTML
 ```
 
 HTMLpp
-
-html
-
+```
+  html
     head
         
         meta charset='utf-8'
@@ -65,4 +64,4 @@ html
 
     closebody
     
-
+```
