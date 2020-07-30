@@ -65,3 +65,41 @@ HTMLpp
     closebody
     
 ```
+
+## Suported Tags
+
+
+ Use ``` -- ``` to comment in htmlpp code;
+
+html
+head
+closehead
+title
+meta
+style
+body
+closebody
+div
+closediv
+a
+button
+input
+p 
+
+## Suported Attributes
+
+charset
+class
+href
+id
+label
+src
+value
+
+
+
+
+
+
+
+
