@@ -29,7 +29,7 @@ HTML
       
 ```
 
-HTMLpp
+HTML++
 ```
   html
     head
