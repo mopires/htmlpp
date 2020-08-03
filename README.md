@@ -10,22 +10,23 @@ HTML
 <html>
   <head>
     <meta charset='utf-8' />
-    <title>My title'</title>
+    <title>My page with html++</title>
     <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css' />
-    <!-- this is a comment -->
   </head>
-  <body>
-    <div class='container' id='main' >
-      <div class='row' id='main' >
-        <div class='col-lg-6 bg-dark' id='div-do-link' >
-          <a href='https://google.com' id='linkG'>'Link to google'</a>
-        </div>
+<body>
+  <div class='container' id='main' >
+    <div class='row' >
+    <div class='col-lg-6 bg-dark' >
+      <a href='https://google.com' id='linkG'>Link to google</a>
+      </div>
       <div class='col-lg-6 bg-green' id='div1' >
-        <p>'What is up'</p>
-      </div>
-      </div>
+        <p>whats up? would like to check ou my sound?</p>
+        <a href='https://juggnix.wtf' id=undefined>juggnix</a>
+
+     </div>
     </div>
-  </body>
+  </div>
+</body>
 </html>
       
 ```
