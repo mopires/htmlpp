@@ -41,7 +41,7 @@ HTML++
 
         style src='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
 
-        -- comment for the style hahaah
+        -- comment no need the <!--...-->
     
     closehead
     
