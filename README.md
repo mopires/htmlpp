@@ -71,7 +71,7 @@ HTML++
    
 ```
 
-You don't need to use SHIFT to code, but you if need to.
+You don't need to use special characters to code, only if you want to.
 
 ## Supported Tags
 
