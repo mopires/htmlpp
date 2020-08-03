@@ -1,4 +1,4 @@
-# htmlpp transpiler (in development)
+# html++ transpiler (in development)
 
 Modern way to write html. The concept remains the same, but without the "&lt; > &lt;/>" like <a href='https://github.com/sass/sass'>Sass</a>, but different.
 
