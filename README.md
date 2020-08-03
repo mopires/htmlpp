@@ -71,6 +71,8 @@ HTML++
    
 ```
 
+You don't need to use SHIFT to code, but you if need to.
+
 ## Supported Tags
 
 
