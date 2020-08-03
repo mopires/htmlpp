@@ -32,11 +32,12 @@ HTML
 HTML++
 ```
   html
+
     head
         
         meta charset='utf-8'
         
-        title value='My title'
+        title value='My page with html++'
 
         style src='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
 
@@ -48,22 +49,25 @@ HTML++
 
         div class='container' id='main'
             
-            div class='row' id='main'
+            div class='row'
 
-                div class='col-lg-6 bg-dark' id='div-do-link'
+                div class='col-lg-6 bg-dark'
 
                     a href='https://google.com' value='Link to google' id='linkG'
+
                 closediv
                 div class='col-lg-6 bg-green' id='div1'
-                    
-                    p value='What is up'
+
+                    p value='whats up? would like to check ou my sound?'
+
+                    a href='https://juggnix.wtf' value='juggnix'
                 
                 closediv
             closediv
         closediv
 
     closebody
-    
+   
 ```
 
 ## Supported Tags
