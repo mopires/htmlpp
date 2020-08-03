@@ -1,0 +1,11 @@
+{
+  "name": "grammar",
+  "version": "1.0.0",
+  "description": "grammar for the compiler",
+  "main": "grammar.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matheus Pires",
+  "license": "ISC"
+}

@@ -2,6 +2,9 @@
 let fs       = require('fs'),
     readline = require('readline');
 
+var syntax  = require('./syntax/syntax.js');
+    
+
 //file
 
 var myInterface = readline.createInterface({
@@ -12,13 +15,14 @@ var lineno = 0;
 var output = '';
 myInterface.on('line', function (line) {
     
-    output = LexicalAnalizer(line) + '\n';
+    lineno++;
+    output = LexicalAnalizer(line, lineno) + '\n';
     // console.log(lineno + ': ' + output);
     fs.appendFile('build/index.html', output, (e) => {
         if (e) throw e;
         
     });
-    lineno++;
+    
 });
 
 
@@ -27,7 +31,7 @@ myInterface.on('line', function (line) {
     
 //read tags
 
-function LexicalAnalizer(line){
+function LexicalAnalizer(line, line_number){
 
     //let lex = line.split(' ').map(s => s.trim()).filter(s => s.length);
     
@@ -55,46 +59,23 @@ function LexicalAnalizer(line){
             attributes['tag'] = lex[0];
         }
 
-        return Parser(attributes);
+        return Parser(attributes, line_number);
     }
 
 }
 
 
 
-function Parser(tokens = null){
+function Parser(tokens = null, line_number){
     
     var line;
     if(tokens == null){
         line = "\n";
         return line;
     }else{
-
-        let grammar = {
-
-            tag: ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style', //keep it hierarchical
-                 'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input', 'p'], 
-            attribute: ['charset', 'class', 'href', 'id', 'label', 'src','value'] //keep it alphabetical
-            
-        }
-
-        //checking the syntax and mounting line
         
-        if(!grammar.tag.includes(tokens['tag'])){
-            console.log("Tag "+tokens['tag'] + " is undefined");
-        }
-
-        if(!tokens['tag'] == '--'){
-            //checking attributes
-            for(key in tokens.props){
-                
-                if(!grammar.attribute.includes(key)){
-                    console.log("Attribute "+ key + " is undefined \n");
-                }
-            }
-        }
+        syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
         
-        // console.log(tokens);
         switch(tokens['tag']){
 
             case '--':
