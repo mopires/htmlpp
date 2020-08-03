@@ -12,6 +12,7 @@ HTML
     <meta charset='utf-8' />
     <title>My title'</title>
     <link rel="stylesheet" href='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css' />
+    <!-- this is a comment -->
   </head>
   <body>
     <div class='container' id='main' >
