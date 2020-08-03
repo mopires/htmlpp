@@ -66,7 +66,7 @@ HTML++
     
 ```
 
-## Suported Tags
+## Supported Tags
 
 
  Use ``` -- ``` to comment in htmlpp code;
@@ -86,7 +86,7 @@ HTML++
 ```input```
 ```p```
 
-## Suported Attributes
+## Supported Attributes
 
 ```charset```
 ```class```
