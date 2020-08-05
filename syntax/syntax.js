@@ -20,12 +20,30 @@ exports.syntax = function(token, line_number){
                 'property': ['value','href']
             }
         }
-
+    
+    //checking tag
     if(!tag.includes(token['tag'])){
         console.log("\n\n");
         console.log("Syntax error:");
         console.log("Tag \""+token['tag'] + "\" is undefined \n\n");
         process.exit();
+    }
+    
+    //checking attributes
+    if(token['props'] != undefined){
+    
+        for(key in token.props){
+            if(!attribute.includes(key)){
+                console.log("\n\n");
+                console.log("Syntax error:");
+                console.log(
+                    "The attribute " + key + " is undefined at line: " + line_number + 
+                    " check the supported keys in " + 
+                    "https://github.com/mopires/htmlpp");
+                console.log("\n\n");
+                process.exit();
+            }
+        }
     }
 
     if(token['tag'] in expression){

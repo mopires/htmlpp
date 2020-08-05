@@ -16,7 +16,7 @@ html
 
         div class='container' id='main'
             
-            div class='row' ddd='fc'
+            div class='row'
 
                 div class='col-lg-6 bg-dark'
 

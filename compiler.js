@@ -24,6 +24,10 @@ myInterface.on('line', function (line) {
     });
     
 });
+
+
+
+//compile
     
 //read tags
 
@@ -34,7 +38,6 @@ function LexicalAnalizer(line, line_number){
     let lex = line.match(/(?:[^\s']+|'[^']*')+/g);
 
     if(lex == null){
-        // console.log(lex);
         return Parser();
     }else{
 
@@ -58,9 +61,7 @@ function LexicalAnalizer(line, line_number){
         return Parser(attributes, line_number);
     }
 
-}
-
-
+}   
 
 function Parser(tokens = null, line_number){
     
@@ -70,7 +71,10 @@ function Parser(tokens = null, line_number){
         return line;
     }else{
         
-        syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
+        if(tokens['tag'] != '--'){
+            syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
+        }
+        
         
         switch(tokens['tag']){
 
