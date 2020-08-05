@@ -90,9 +90,9 @@ You don't need to use special characters to code, only if you want to.
 ```div```
 ```closediv```
 ```a```
-```button```
-```input```
 ```p```
+
+The ```style``` require only a ```src```. And belive it or not is meant to link the __stylesheets__ ;
 
 ## Supported Attributes
 
