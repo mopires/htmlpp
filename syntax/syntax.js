@@ -33,9 +33,12 @@ exports.syntax = function(token, line_number){
         if(token['props'] == undefined){
             console.log("\n\n");
             console.log("Syntax error:");
+
             console.log("The tag \"" + token['tag'] + "\" expects a " + 
                         expression[token['tag']].property + " property on line: " + line_number);
+            
             process.exit();
+
         }else{
             if(token['tag'] != '--'){
                 for(key in token.props){

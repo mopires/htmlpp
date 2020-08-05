@@ -24,10 +24,6 @@ myInterface.on('line', function (line) {
     });
     
 });
-
-
-
-//compile
     
 //read tags
 
