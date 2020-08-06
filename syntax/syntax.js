@@ -71,8 +71,6 @@ exports.syntax = function(token, line_number){
             }
         }
 
-    }else{
-        
     }
 
 }
