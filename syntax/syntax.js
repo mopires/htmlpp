@@ -2,7 +2,7 @@ exports.syntax = function(token, line_number){
 
     //keep it hierarchical or don't. whatever, as long as it works
     var tag = ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style',
-                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input', 'p'];
+                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input','p', 'javascript'];
 
     //keep it alphabetical
     var attribute = ['charset', 'class', 'href', 'id', 'label', 'src','value'];
@@ -18,6 +18,12 @@ exports.syntax = function(token, line_number){
             },
             'a': {
                 'property': ['value','href']
+            },
+            'style': {
+                'property': 'src'
+            },
+            'javascript':{
+                'property': 'src'
             }
         }
     

@@ -118,6 +118,9 @@ function Parser(tokens = null, line_number){
             case 'p':
                 line = '<p>' + formatValue(tokens.props['value']) + '</p>';
                 break;
+            case 'javascript':
+                line = '<script src=' + tokens.props['src'] + '></script>';
+                break;
             
         }
     }

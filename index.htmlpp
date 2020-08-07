@@ -32,6 +32,8 @@ html
                 closediv
             closediv
         closediv
-
+        
+        javascript src='../main.js'
+        
     closebody
     
