@@ -96,7 +96,7 @@ You don't need to use special characters to code, only if you want to.
 ```p```
 ```javascript```
 
-The ```style``` require only a ```src```. And belive it or not is meant to link the __stylesheets__;
+The ```style``` and ```javascript``` require only a ```src```.
 
 ## Supported Attributes
 
