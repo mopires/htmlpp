@@ -94,18 +94,19 @@ You don't need to use special characters to code, only if you want to.
 ```closediv```
 ```a```
 ```p```
+```javascript```
 
-The ```style``` require only a ```src```. And belive it or not is meant to link the __stylesheets__ ;
+The ```style``` require only a ```src```. And belive it or not is meant to link the __stylesheets__;
 
 ## Supported Attributes
 
-```charset```
-```class```
-```href```
-```id```
-```label```
-```src```
-```value```
+```charset``` (meta)
+```class``` (n)
+```href``` (a)
+```id``` (n)
+```label``` (a)
+```src``` (style & javascript)
+```value``` (title, p, a)
 
 
 
