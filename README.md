@@ -32,7 +32,7 @@ HTML
 ```
 
 HTML++
-```
+```html
   html
 
     head
@@ -67,7 +67,9 @@ HTML++
                 closediv
             closediv
         closediv
-
+        
+        javascript src='../main.js'
+        
     closebody
    
 ```
