@@ -100,13 +100,13 @@ The ```style``` require only a ```src```. And belive it or not is meant to link 
 
 ## Supported Attributes
 
-```charset``` (meta)
-```class``` (n)
-```href``` (a)
-```id``` (n)
-```label``` (a)
-```src``` (style & javascript)
-```value``` (title, p, a)
+```charset```
+```class```
+```href```
+```id```
+```label```
+```src``` 
+```value```
 
 
 
