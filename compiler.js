@@ -8,7 +8,7 @@ var syntax  = require('./syntax/syntax.js');
 //file
 
 var myInterface = readline.createInterface({
-    input: fs.createReadStream('index.htmlpp')
+    input: fs.createReadStream('index.htmlpp') // Needs to be wide for other files
 });
 
 var lineno = 0;
