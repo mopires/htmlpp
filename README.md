@@ -26,13 +26,14 @@ HTML
      </div>
     </div>
   </div>
+  <script src='../main.js'></script>
 </body>
 </html>
       
 ```
 
 HTML++
-```
+```html
   html
 
     head
@@ -67,7 +68,9 @@ HTML++
                 closediv
             closediv
         closediv
-
+        
+        javascript src='../main.js'
+        
     closebody
    
 ```
@@ -91,8 +94,9 @@ You don't need to use special characters to code, only if you want to.
 ```closediv```
 ```a```
 ```p```
+```javascript```
 
-The ```style``` require only a ```src```. And belive it or not is meant to link the __stylesheets__ ;
+The ```style``` and ```javascript``` require only a ```src```.
 
 ## Supported Attributes
 
@@ -101,7 +105,7 @@ The ```style``` require only a ```src```. And belive it or not is meant to link 
 ```href```
 ```id```
 ```label```
-```src```
+```src``` 
 ```value```
 
 
