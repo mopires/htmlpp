@@ -91,10 +91,14 @@ function Parser(tokens = null, line_number){
                 line = '</head>';
                 break;
             case 'meta':
-                line = '<meta ' + tokens.props['charset'] + ' />';
+                line = '<meta ';
+                for(key in tokens.props){
+                    line += key + '='+ tokens.props[key];
+                }
+                line += ' />';
                 break;
             case 'title':
-                line = '<title>' + formatValue(tokens.props['value']) + '</title>'
+                line = '<title>' + formatValue(tokens.props['value']) + '</title>';
                 break;
             case 'style':
                 line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
@@ -106,7 +110,11 @@ function Parser(tokens = null, line_number){
                 line = '</body>';
                 break;
             case 'div': 
-                line = '<div class='+tokens.props['class']+' id='+tokens.props['id']+' >';
+                line = '<div ';
+                for(key in tokens.props){
+                    line += key + '='+ tokens.props[key];
+                }
+                line += '>';
                 break;
             case 'closediv':
                 line = '</div>';
