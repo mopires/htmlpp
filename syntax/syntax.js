@@ -2,10 +2,10 @@ exports.syntax = function(token, line_number){
 
     //keep it hierarchical or don't. whatever, as long as it works
     var tag = ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style',
-                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input','p', 'javascript'];
+                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input', 'p', 'javascript'];
 
     //keep it alphabetical
-    var attribute = ['charset', 'class', 'href', 'id', 'label', 'src','value'];
+    var attribute = ['charset', 'class', 'href', 'id', 'label', 'src','value', 'type', 'placeholder'];
 
     //Mandatory properties
     var expression = 
@@ -16,8 +16,14 @@ exports.syntax = function(token, line_number){
             'p': {
                 'property': 'value'
             },
+            'input': {
+                'property': 'type'
+            },
             'a': {
                 'property': ['value','href']
+            },
+            'button':{
+                'property': 'value'
             },
             'style': {
                 'property': 'src'
