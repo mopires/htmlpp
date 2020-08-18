@@ -109,7 +109,7 @@ The ```style``` and ```javascript``` require only a ```src```.
 
 ## There is no syntax highlighter
 
-HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text wich is not nice. 
+HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text which is not nice. 
 
 
 
