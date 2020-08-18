@@ -79,7 +79,6 @@ You don't need to use special characters to code, only if you want to.
 
 ## Supported Tags
 
-
  Use ``` -- ``` to comment in htmlpp code;
  
 ```html```
@@ -108,7 +107,9 @@ The ```style``` and ```javascript``` require only a ```src```.
 ```src``` 
 ```value```
 
+## There is no syntax highlighter
 
+HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text which is not nice. 
 
 
 
