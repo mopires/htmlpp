@@ -18,7 +18,7 @@ myInterface.on('line', function (line) {
     lineno++;
     output = LexicalAnalizer(line, lineno) + '\n';
     // console.log(lineno + ': ' + output);
-    fs.appendFile('build/index.html', output, (e) => {
+    fs.appendFile('./build/index.html', output, (e) => {
         if (e) throw e;
         
     });
