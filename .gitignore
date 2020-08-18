@@ -2,3 +2,7 @@
 build/
 
 issues
+
+./idea
+
+./vscode

@@ -8,7 +8,7 @@ var syntax  = require('./syntax/syntax.js');
 //file
 
 var myInterface = readline.createInterface({
-    input: fs.createReadStream('index.htmlpp')
+    input: fs.createReadStream('index.htmlpp') // Needs to be wide for other files
 });
 
 var lineno = 0;
@@ -123,11 +123,28 @@ function Parser(tokens = null, line_number){
                 line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + 
                         formatValue(tokens.props['value']) + '</a>';
                 break;
+            
+            case 'button': 
+                line = '<button ';
+                for(key in tokens.props){
+                    if(key != 'value') line += key + '='+ tokens.props[key];
+                }
+                line += '>' + formatValue(tokens.props['value']);
+                line += '</button>';
+                break;
             case 'p':
                 line = '<p>' + formatValue(tokens.props['value']) + '</p>';
                 break;
             case 'javascript':
                 line = '<script src=' + tokens.props['src'] + '></script>';
+                break;
+
+            case 'input':
+                line = '<input ';
+                for(key in tokens.props){
+                    line += key + '='+ tokens.props[key];
+                }
+                line += ' />';
                 break;
             
         }
