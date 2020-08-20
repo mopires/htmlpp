@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-let fs       = require('fs'),
-    readline = require('readline');
+const fs       = require('fs'),
+      readline = require('readline'),
+      chalk    = require('chalk');
 
-var syntax  = require('./syntax/syntax.js');
-    
+const syntax  = require('./syntax/syntax.js');
 
+console.log(chalk.greenBright("Compiling HTMLpp \n"));
 //file
 
 var myInterface = readline.createInterface({

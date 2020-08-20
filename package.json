@@ -8,5 +8,17 @@
   },
   "author": "Matheus Pires",
   "license": "ISC",
-  "keywords": ["frontend", "css", "html", "bootstrap", "sass", "preprocessor", "style", "clean code"]
+  "keywords": [
+    "frontend",
+    "css",
+    "html",
+    "bootstrap",
+    "sass",
+    "preprocessor",
+    "style",
+    "clean code"
+  ],
+  "devDependencies": {
+    "chalk": "^4.1.0"
+  }
 }
