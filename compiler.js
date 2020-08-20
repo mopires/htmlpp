@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 let fs       = require('fs'),
     readline = require('readline');

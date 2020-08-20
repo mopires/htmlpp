@@ -1,10 +1,10 @@
 {
-  "name": "compiler",
-  "version": "1.0.0",
+  "name": "htmlpp-com-github-mopires",
+  "version": "1.0.1",
   "description": "Modern html compiler",
   "main": "compiler.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "bin": {
+    "htmlpp": "compiler.js"
   },
   "author": "Matheus Pires",
   "license": "ISC"
