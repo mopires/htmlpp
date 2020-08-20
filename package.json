@@ -1,11 +1,12 @@
 {
   "name": "htmlpp-com-github-mopires",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Modern html compiler",
   "main": "compiler.js",
   "bin": {
     "htmlpp": "compiler.js"
   },
   "author": "Matheus Pires",
-  "license": "ISC"
+  "license": "ISC",
+  "keywords": ["frontend", "css", "html", "bootstrap", "sass", "preprocessor", "style", "clean code"]
 }
