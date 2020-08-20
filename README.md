@@ -117,7 +117,8 @@ HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be 
 You install it with NPM and test. 
 ```npm i htmlpp-com-github-mopires```
 
-At the moment you need to create a folder called "build" at the root of the project, so htmlpp can save the build file on it.
+At the moment you need to create a folder called "build" at the root of the project, so htmlpp can save the build file on it and the file 
+you are writing htmlpp should be named __index.htmlpp__.
 
 You can build with ```htmlpp```.
 
