@@ -1,4 +1,7 @@
 exports.syntax = function(token, line_number){
+    
+    const chalk = require('chalk');
+    const log = console.log;
 
     //keep it hierarchical or don't. whatever, as long as it works
     var tag = ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style',
@@ -35,9 +38,13 @@ exports.syntax = function(token, line_number){
     
     //checking tag
     if(!tag.includes(token['tag'])){
-        console.log("\n\n");
-        console.log("Syntax error:");
-        console.log("Tag \""+token['tag'] + "\" is undefined \n\n");
+        
+        log("");
+        log(chalk.red(" Syntax error:"));
+        log(" Tag \"" + chalk.blue(token['tag']) + "\" is undefined at " +chalk.yellow("line: " + line_number));
+
+        log(chalk.yellowBright("\n ** Check the supported Tags in https://github.com/mopires/htmlpp ** \n"));
+        
         process.exit();
     }
     
@@ -46,13 +53,15 @@ exports.syntax = function(token, line_number){
     
         for(key in token.props){
             if(!attribute.includes(key)){
-                console.log("\n\n");
-                console.log("Syntax error:");
-                console.log(
-                    "The attribute " + key + " is undefined at line: " + line_number + 
-                    " check the supported keys in " + 
-                    "https://github.com/mopires/htmlpp");
-                console.log("\n\n");
+                
+                console.log("\n");
+                log(chalk.red("Syntax error:"));
+                log("The attribute " + chalk.blue(key) + " is undefined at " +chalk.yellow("line: " + line_number)); 
+                
+                log(chalk.yellowBright("\n ** Check the supported attributes in https://github.com/mopires/htmlpp **"));
+                
+                console.log("\n");
+                
                 process.exit();
             }
         }
