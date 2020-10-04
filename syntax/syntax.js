@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 exports.syntax = function(token, line_number){
     
     const chalk = require('chalk');
