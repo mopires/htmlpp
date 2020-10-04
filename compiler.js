@@ -19,11 +19,18 @@ myInterface.on('line', function (line) {
     
     lineno++;
     output = LexicalAnalizer(line, lineno) + '\n';
+    
     // console.log(lineno + ': ' + output);
+    
+    if (!fs.existsSync('./build')){
+        fs.mkdirSync('./build');
+    }
+
     fs.appendFile('./build/index.html', output, (e) => {
         if (e) throw e;
-        
     });
+
+    
     
 });
 

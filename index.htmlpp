@@ -22,7 +22,7 @@ html
 
                     a href='https://google.com' value='Link to google' id='linkG'
 
-                    banana cor='azul'
+                    -- banana cor='azul'
 
                     input type='text' placeholder='Name' class='form-control'
 
