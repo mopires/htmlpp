@@ -8,8 +8,7 @@ const syntax  = require('./syntax/syntax.js');
 
 const log = console.log;
 
-console.log(chalk.greenBright("Compiling HTMLpp \n"));
-//file
+console.log(chalk.greenBright("Compiling... \n"));
 
 var myInterface = readline.createInterface({
     input: fs.createReadStream('index.htmlpp') // Needs to be wide for other files
@@ -28,32 +27,18 @@ myInterface.on('line', function (line) {
         fs.mkdirSync('./build');
     }
 
-    // fs.appendFile('./build/index.html', output, (e) => {
-    //     if (e) throw e;
-    // });
-
-    
-    
 }).on('close', function(line){
-    //if (fs.existsSync('./build/index.html')){
+    
+    fs.writeFileSync('./build/index.html', output, (e) => {
+        if (e) throw e;
+    });
         
-        fs.writeFileSync('./build/index.html', output, (e) => {
-            if (e) throw e;
-        });
-        
-    //}
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
 });
 
 
 
-//compile
-    
-//read tags
-
 function LexicalAnalizer(line, line_number){
-
-    //let lex = line.split(' ').map(s => s.trim()).filter(s => s.length);
     
     let lex = line.match(/(?:[^\s']+|'[^']*')+/g);
 
@@ -87,14 +72,13 @@ function Parser(tokens = null, line_number){
     
     var line;
     if(tokens == null){
-        line = "\n";
+        line = "";
         return line;
     }else{
         
         if(tokens['tag'] != '--'){
             syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
         }
-        
         
         switch(tokens['tag']){
 
