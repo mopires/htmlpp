@@ -6,10 +6,12 @@ exports.syntax = function(token, line_number){
 
     //keep it hierarchical or don't. whatever, as long as it works
     var tag = ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style',
-                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input', 'p', 'javascript'];
+                'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input',
+                'p', 'javascript'];
 
     //keep it alphabetical
-    var attribute = ['charset', 'class', 'href', 'id', 'label', 'src','value', 'type', 'placeholder'];
+    var attribute = ['charset', 'class', 'href', 'id', 'label',
+                        'src','value', 'type', 'placeholder'];
 
     //Mandatory properties
     var expression = 
@@ -42,9 +44,12 @@ exports.syntax = function(token, line_number){
         
         log("");
         log(chalk.red(" Syntax error:"));
-        log(" Tag \"" + chalk.blue(token['tag']) + "\" is undefined at " +chalk.yellow("line: " + line_number));
+        log(" Tag \"" + chalk.blue(token['tag']) + "\" is undefined at " +
+                chalk.yellow("line: " + line_number));
 
-        log(chalk.yellowBright("\n ** Check the supported Tags in https://github.com/mopires/htmlpp ** \n"));
+        log(
+            chalk.yellowBright(
+                "\n ** Check the supported Tags in https://github.com/mopires/htmlpp ** \n"));
         
         process.exit();
     }
@@ -57,9 +62,13 @@ exports.syntax = function(token, line_number){
                 
                 console.log("\n");
                 log(chalk.red("Syntax error:"));
-                log("The attribute " + chalk.blue(key) + " is undefined at " +chalk.yellow("line: " + line_number)); 
+                log("The attribute " + chalk.blue(key) + " is undefined at " +
+                chalk.yellow("line: " + line_number)); 
                 
-                log(chalk.yellowBright("\n ** Check the supported attributes in https://github.com/mopires/htmlpp **"));
+                log(
+                chalk.yellowBright(
+                "\n ** Check the supported attributes in https://github.com/mopires/htmlpp **")
+                );
                 
                 console.log("\n");
                 
