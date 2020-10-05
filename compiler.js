@@ -6,6 +6,8 @@ const fs       = require('fs'),
 
 const syntax  = require('./syntax/syntax.js');
 
+const log = console.log;
+
 console.log(chalk.greenBright("Compiling HTMLpp \n"));
 //file
 
@@ -18,7 +20,7 @@ var output = '';
 myInterface.on('line', function (line) {
     
     lineno++;
-    output = LexicalAnalizer(line, lineno) + '\n';
+    output += LexicalAnalizer(line, lineno) + '\n';
     
     // console.log(lineno + ': ' + output);
     
@@ -26,12 +28,21 @@ myInterface.on('line', function (line) {
         fs.mkdirSync('./build');
     }
 
-    fs.appendFile('./build/index.html', output, (e) => {
-        if (e) throw e;
-    });
+    // fs.appendFile('./build/index.html', output, (e) => {
+    //     if (e) throw e;
+    // });
 
     
     
+}).on('close', function(line){
+    //if (fs.existsSync('./build/index.html')){
+        
+        fs.writeFileSync('./build/index.html', output, (e) => {
+            if (e) throw e;
+        });
+        
+    //}
+    log(chalk.green("Compiled *SUCCESSFULLY* \n"));
 });
 
 
