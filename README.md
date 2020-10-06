@@ -92,6 +92,8 @@ You don't need to use special characters to code, only if you want to.
 ```div```
 ```closediv```
 ```a```
+```button```
+```input type='text'```
 ```p```
 ```javascript```
 
