@@ -1,6 +1,6 @@
 # html++ transpiler (in development)
 
-Modern way to write html. The concept remains the same, but without the "&lt; > &lt;/>" like <a href='https://github.com/sass/sass'>Sass</a>, but different.
+Modern way to write html. The concept remains the same, but without the "&lt; > &lt;/>", like <a href='https://github.com/sass/sass'>Sass</a>, but different.
 
 ## Example
 
@@ -114,18 +114,10 @@ HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be 
 
 # NPM
 
-You install it with NPM and test. 
-```npm i htmlpp-com-github-mopires```
+You can install it with NPM and test. ```npm i htmlpp-com-github-mopires```.
 
-At the moment you need to create a folder called "build" at the root of the project, so htmlpp can save the build file on it and the file 
-you are writing htmlpp should be named __index.htmlpp__.
+The file you are writing HTMLPP should be named __index.htmlpp__.
 
-You can build with ```htmlpp```.
+After install the dependencies you can compile with ```htmlpp```.
 
 And that's it.
-
-
-
-
-
-
