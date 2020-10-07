@@ -22,18 +22,19 @@ myInterface.on('line', function (line) {
     output += LexicalAnalizer(line, lineno) + '\n';
     
     // console.log(lineno + ': ' + output);
+
+}).on('close', function(line){
     
     if (!fs.existsSync('./build')){
         fs.mkdirSync('./build');
     }
 
-}).on('close', function(line){
-    
     fs.writeFileSync('./build/index.html', output, (e) => {
         if (e) throw e;
     });
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
+    
 });
 
 
