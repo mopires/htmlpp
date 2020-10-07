@@ -113,6 +113,8 @@ The ```style``` and ```javascript``` require only a ```src```.
 
 HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text which is not nice.
 
+A syntax highlighter is currently under development for <a href='https://code.visualstudio.com/'>Visual Code Editor</a> and soon will be available.
+
 
 # NPM
 
