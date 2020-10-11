@@ -167,7 +167,7 @@ function Parser(tokens = null, line_number){
 }
 
 function formatValue(value){
-    
+
     return value.replace("'", "").replace("'", "");
 
 }

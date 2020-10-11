@@ -109,6 +109,8 @@ The ```style``` and ```javascript``` require only a ```src```.
 ```src``` 
 ```value```
 
+The values in the attributes need to be especifield with single quote (src='example').
+
 ## Meta Tags
 
 Now the ```meta``` tags, ```charset``` and ```viewport``` are built in with default values of __utf-8__ and __width=device-width, initial-scale=1__ respectively. ```DOCTYPE``` also, you don't need to write them at htmlpp document.

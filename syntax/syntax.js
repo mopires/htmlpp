@@ -5,7 +5,7 @@ exports.syntax = function(token, line_number){
     const log = console.log;
 
     //keep it hierarchical or don't. whatever, as long as it works
-    var tag = ['--', 'html', 'head', 'closehead', 'title', 'meta', 'style',
+    var tag = ['--', '!DOCTYPE', 'html', 'head', 'closehead', 'title', 'meta', 'style',
                 'body', 'closebody', 'div', 'closediv', 'a', 'button', 'input',
                 'p', 'javascript'];
 
