@@ -10,7 +10,7 @@ exports.syntax = function(token, line_number){
                 'p', 'javascript'];
 
     //keep it alphabetical
-    var attribute = ['charset', 'class', 'href', 'id', 'label',
+    var attribute = ['charset', 'description', 'keywords', 'class', 'href', 'id', 'label',
                         'src','value', 'type', 'placeholder'];
 
     //Mandatory properties

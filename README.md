@@ -109,6 +109,27 @@ The ```style``` and ```javascript``` require only a ```src```.
 ```src``` 
 ```value```
 
+## Meta Tags
+
+Now the ```meta``` tags, ```charset``` and ```viewport``` are built in with default values of __utf-8__ and __width=device-width, initial-scale=1__ respectively. ```DOCTYPE``` also, you don't need to write them at htmlpp document.
+
+At the moment, to change it, you need to go in the build file and change it. In the future, that will have a much more cooler way to do it.
+
+### Description & Keywords
+
+Those are the new supported attributes to ```meta```!
+
+```html
+  [...]
+  
+  meta description='This is a page made with html++!'
+
+  meta keywords='htmlpp, js, nodejs'
+
+  [...]
+
+```
+
 ## There is no syntax highlighter
 
 HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text which is not nice.

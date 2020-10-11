@@ -86,11 +86,18 @@ function Parser(tokens = null, line_number){
             case '--':
                 line = '';
                 break;
+            case '!DOCTYPE':
+                log(chalk.yellowBright("You don't need to implement a DOCTYPE..."));
+                line = '';
+                break;
             case 'html':
-                line = '<html>';
+                line = '<!DOCTYPE html>'
+                line += '<html>';
                 break;
             case 'head':
                 line = '<head>'
+                line += '<meta charset="utf-8">'
+                line += '<meta name="viewport" content="width=device-width, initial-scale=1"></meta>';
                 break;
             case 'closehead':
                 line = '</head>';

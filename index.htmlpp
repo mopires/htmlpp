@@ -2,13 +2,15 @@ html
 
     head
         
-        meta charset='utf-8'
-        
+        meta description='This is a page made with html++!'
+
+        meta keywords='htmlpp, js, node'
+
         title value='My page with html++'
 
         style src='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
 
-        -- this is a comment
+        -- this is amer... a comment
     
     closehead
     
@@ -21,8 +23,6 @@ html
                 div class='col-lg-6 '
 
                     a href='https://google.com' value='Link to google' id='linkG'
-
-                    -- banana cor='azul'
 
                     input type='text' placeholder='Name' class='form-control'
 
