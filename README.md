@@ -132,11 +132,11 @@ Those are the new supported attributes to ```meta```!
 
 ```
 
-## There is no syntax highlighter
+## Syntax Highlighter Available!
 
-HTMLpp do not have any syntax highlighter to help. So it in the IDEs it will be Plain-Text which is not nice.
+On [Visual Code Editor]("https://code.visualstudio.com/") you can search for HTMLPP and install the extension and enjoy it!
 
-A syntax highlighter is currently under development for <a href='https://code.visualstudio.com/'>Visual Code Editor</a> and soon will be available.
+> ext install mopires-htmlpp.htmlpp
 
 
 # NPM
