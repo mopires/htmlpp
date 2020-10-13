@@ -104,9 +104,16 @@ function Parser(tokens = null, line_number){
                 break;
             case 'meta':
                 line = '<meta ';
-                for(key in tokens.props){
-                    line += key + '='+ tokens.props[key];
+                if(tokens.props['keywords'] != undefined){
+                    line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
+                }else
+                if(tokens.props['description'] != undefined){
+                    line += 'name="description" content="' + tokens.props['description'] + '"';
                 }
+
+                // for(key in tokens.props){
+                //     line += key + '='+ tokens.props[key];
+                // }
                 line += ' />';
                 break;
             case 'title':
