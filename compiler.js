@@ -96,8 +96,8 @@ function Parser(tokens = null, line_number){
                 break;
             case 'head':
                 line = '<head>'
-                line += '<meta charset="utf-8">'
-                line += '<meta name="viewport" content="width=device-width, initial-scale=1"></meta>';
+                line += '<meta charset="utf-8" />'
+                line += '<meta name="viewport" content="width=device-width, initial-scale=1" />';
                 break;
             case 'closehead':
                 line = '</head>';
