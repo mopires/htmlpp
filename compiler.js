@@ -27,12 +27,18 @@ myInterface.on('line', function (line) {
     html_compiled += output[0];
 
     if(output[1].file != undefined){
+        if(!fs.existsSync("./"+output[1].src)){
+            log(
+                " "+chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
+            process.exit();
+        }
         linked_files.push(output[1]);
     }
 
 
+
 }).on('close', function(line){
-    
+
     if (!fs.existsSync('./build')){
         fs.mkdirSync('./build');
     }
@@ -41,11 +47,6 @@ myInterface.on('line', function (line) {
         if (e) throw e;
     });
 
-    for(let i = 0; i < linked_files.length; i++){
-        
-        
-
-    }
     
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
