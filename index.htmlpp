@@ -4,6 +4,8 @@ html
         
         meta description='This is a page made with html++!'
 
+        icon src='htmlpp.png'
+
         meta keywords='htmlpp, js, node'
 
         title value='My page with html++'

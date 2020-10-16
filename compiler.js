@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const { O_TRUNC } = require('constants');
 const fs       = require('fs'),
       readline = require('readline'),
       chalk    = require('chalk');
@@ -14,13 +15,23 @@ var myInterface = readline.createInterface({
     input: fs.createReadStream('index.htmlpp') // Needs to be wide for other files
 });
 
-var lineno = 0;
-var output = '';
+var line_number = 0;
+var output = [];
+var html_compiled = '';
+var linked_files = Array();
 myInterface.on('line', function (line) {
     
-    lineno++;
-    output += LexicalAnalizer(line, lineno) + '\n';
+    line_number++;
+    output = LexicalAnalizer(line, line_number);
     
+    html_compiled += output[0];
+
+    // if(!output[1] == ""){
+    //     linked_files
+    // }
+    
+    
+
     // console.log(lineno + ': ' + output);
 
 }).on('close', function(line){
@@ -29,9 +40,11 @@ myInterface.on('line', function (line) {
         fs.mkdirSync('./build');
     }
 
-    fs.writeFileSync('./build/index.html', output, (e) => {
+    fs.writeFileSync('./build/index.html', html_compiled, (e) => {
         if (e) throw e;
     });
+
+    
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
     
@@ -72,9 +85,14 @@ function LexicalAnalizer(line, line_number){
 function Parser(tokens = null, line_number){
     
     var line;
+    var files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
+    var data = [2];
+    data[1] = "";
     if(tokens == null){
         line = "";
-        return line;
+        data[0] = line;
+        data[1] = "";
+        return data;
     }else{
         
         if(tokens['tag'] != '--'){
@@ -116,6 +134,14 @@ function Parser(tokens = null, line_number){
                 // }
                 line += ' />';
                 break;
+            case 'icon':
+                line = '<link rel="icon" href="icon.png" type="image/gif" sizes="16x16"></link>';
+                
+                files["file"]   = 'icon.png';
+                files["src"]    = tokens.props['src'];
+                files["folder"] = "ROOT";
+                data[1] = files;
+                break
             case 'title':
                 line = '<title>' + formatValue(tokens.props['value']) + '</title>';
                 break;
@@ -169,7 +195,10 @@ function Parser(tokens = null, line_number){
         }
     }
 
-    return line;
+    data[0] = line;
+    
+
+    return data;
 
 }
 
