@@ -26,13 +26,10 @@ myInterface.on('line', function (line) {
     
     html_compiled += output[0];
 
-    // if(!output[1] == ""){
-    //     linked_files
-    // }
-    
-    
+    if(output[1].file != undefined){
+        linked_files.push(output[1]);
+    }
 
-    // console.log(lineno + ': ' + output);
 
 }).on('close', function(line){
     
@@ -43,7 +40,6 @@ myInterface.on('line', function (line) {
     fs.writeFileSync('./build/index.html', html_compiled, (e) => {
         if (e) throw e;
     });
-
     
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
@@ -87,11 +83,10 @@ function Parser(tokens = null, line_number){
     var line;
     var files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
     var data = [2];
-    data[1] = "";
+    data[1] = Array();
     if(tokens == null){
         line = "";
         data[0] = line;
-        data[1] = "";
         return data;
     }else{
         
