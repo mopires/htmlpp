@@ -41,7 +41,7 @@ html
             closediv
         closediv
         
-        javascript src='../main.js'
+        javascript src='main.js'
         
     closebody
     

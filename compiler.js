@@ -40,6 +40,12 @@ myInterface.on('line', function (line) {
     fs.writeFileSync('./build/index.html', html_compiled, (e) => {
         if (e) throw e;
     });
+
+    for(let i = 0; i < linked_files.length; i++){
+        
+        
+
+    }
     
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
@@ -133,7 +139,7 @@ function Parser(tokens = null, line_number){
                 line = '<link rel="icon" href="icon.png" type="image/gif" sizes="16x16"></link>';
                 
                 files["file"]   = 'icon.png';
-                files["src"]    = tokens.props['src'];
+                files["src"]    = formatValue(tokens.props['src']);
                 files["folder"] = "ROOT";
                 data[1] = files;
                 break
@@ -142,6 +148,14 @@ function Parser(tokens = null, line_number){
                 break;
             case 'style':
                 line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
+                
+                if(!tokens.props['src'].match("https://")){
+                    files["file"]   = 'main.css';
+                    files["src"]    = formatValue(tokens.props['src']);
+                    files["folder"] = "css";
+                    data[1] = files;
+                }
+
                 break;
             case 'body':
                 line = '<body>';
@@ -177,6 +191,12 @@ function Parser(tokens = null, line_number){
                 break;
             case 'javascript':
                 line = '<script src=' + tokens.props['src'] + '></script>';
+
+                files["file"]   = 'main.js';
+                files["src"]    = formatValue(tokens.props['src']);
+                files["folder"] = "js";
+                data[1] = files;
+
                 break;
 
             case 'input':
