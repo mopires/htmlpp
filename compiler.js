@@ -31,8 +31,9 @@ myInterface.on('line', function (line) {
             log(
                 " "+chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
             process.exit();
+        }else{
+            linked_files.push(output[1]);
         }
-        linked_files.push(output[1]);
     }
 
 
@@ -47,7 +48,28 @@ myInterface.on('line', function (line) {
         if (e) throw e;
     });
 
-    
+    for (let i = 0; i < linked_files.length; i++) {
+        
+        let file_url ={};
+        if(!linked_files[i].src.match("/")){
+            fs.copyFileSync(linked_files[i].src, './build/'+linked_files[i].src);
+        }else{
+            file_url = linked_files[i].src.split("/");
+            file_url.pop(file_url.length-1);
+            let file_dir = file_url.toString().replace(',',"/");
+
+            if(!fs.existsSync('./build/'+file_dir)){
+                fs.mkdirSync('./build/'+file_dir, {recursive: true});
+                fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+            }else{
+                fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+            }
+            
+        }
+        
+        // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+        
+    }
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
     
@@ -137,7 +159,7 @@ function Parser(tokens = null, line_number){
                 line += ' />';
                 break;
             case 'icon':
-                line = '<link rel="icon" href="icon.png" type="image/gif" sizes="16x16"></link>';
+                line = '<link rel="icon" href="'+formatValue(tokens.props['src'])+'" type="image/gif" sizes="16x16"></link>';
                 
                 files["file"]   = 'icon.png';
                 files["src"]    = formatValue(tokens.props['src']);
