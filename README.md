@@ -33,7 +33,7 @@ HTML
 ```
 
 HTML++
-```html
+```htmlpp
   html
 
     head
@@ -86,6 +86,7 @@ You don't need to use special characters to code, only if you want to.
 ```closehead```
 ```title```
 ```meta```
+```icon```
 ```style```
 ```body```
 ```closebody```
@@ -102,6 +103,8 @@ The ```style``` and ```javascript``` require only a ```src```.
 ## Supported Attributes
 
 ```charset```
+```keywords```
+```description```
 ```class```
 ```href```
 ```id```
@@ -113,15 +116,15 @@ The values in the attributes need to be especifield with single quote (src='exam
 
 ## Meta Tags
 
-Now the ```meta``` tags, ```charset``` and ```viewport``` are built in with default values of __utf-8__ and __width=device-width, initial-scale=1__ respectively. ```DOCTYPE``` also, you don't need to write them at htmlpp document.
+The ```meta``` tags, ```charset``` and ```viewport``` are built in with default values of __utf-8__ and __width=device-width, initial-scale=1__ respectively. ```DOCTYPE``` also, you don't need to write them at __htmlpp__ document.
 
-At the moment, to change it, you need to go in the build file and change it. In the future, that will have a much more cooler way to do it.
+> Warning: At the moment, to change it, you need to go in the build file and change it. In the future, that will have a much more cooler way to do it.
 
 ### Description & Keywords
 
 Those are the new supported attributes to ```meta```!
 
-```html
+```htmlpp
   [...]
   
   meta description='This is a page made with html++!'
@@ -132,6 +135,24 @@ Those are the new supported attributes to ```meta```!
 
 ```
 
+## Favicon (icon)
+
+To setup the icon of the page you can use ```icon``` tag. 
+
+> icon href='myicon.png'
+
+
+## Link files
+
+Linking files to htmlpp is simple:
+
+  ```htmlpp
+
+      style src='assets/css/main.css'
+      javascript src='assets/js/main.js'
+
+  ```
+
 ## Syntax Highlighter Available!
 
 On [Visual Code Editor]("https://code.visualstudio.com/") you can search for HTMLPP and install the extension and enjoy it!
@@ -141,10 +162,14 @@ On [Visual Code Editor]("https://code.visualstudio.com/") you can search for HTM
 
 # NPM
 
-You can install it with NPM and test. ```npm i htmlpp-com-github-mopires```.
+You can install it with NPM and test. 
+
+>Installation: npm i htmlpp-com-github-mopires 
 
 The file you are writing HTMLPP should be named __index.htmlpp__.
 
 After install the dependencies you can compile with ```htmlpp```.
 
 And that's it.
+
+__Enjoy it!__
