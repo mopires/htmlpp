@@ -3,7 +3,7 @@
   "version": "1.0.45",
   "description": "Modern html transpiler",
   "main": "compiler.js",
-  "bin": {
+  "scripts": {
     "htmlpp": "./compiler.js"
   },
   "author": "Matheus Pires",

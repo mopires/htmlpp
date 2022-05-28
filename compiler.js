@@ -48,28 +48,28 @@ myInterface.on('line', function (line) {
         if (e) throw e;
     });
 
-    for (let i = 0; i < linked_files.length; i++) {
+    linked_files.forEach((linked_file) => {
         
         let file_url ={};
-        if(!linked_files[i].src.match("/")){
-            fs.copyFileSync(linked_files[i].src, './build/'+linked_files[i].src);
+        if(!linked_file.src.match("/")){
+            fs.copyFileSync(linked_file.src, './build/'+linked_file.src);
         }else{
-            file_url = linked_files[i].src.split("/");
+            file_url = linked_file.src.split("/");
             file_url.pop(file_url.length-1);
             let file_dir = file_url.toString().replace(',',"/");
 
             if(!fs.existsSync('./build/'+file_dir)){
                 fs.mkdirSync('./build/'+file_dir, {recursive: true});
-                fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+                fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
             }else{
-                fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+                fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
             }
             
         }
         
         // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
         
-    }
+    });
         
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
     
