@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-const { O_TRUNC } = require('constants');
-const fs       = require('fs'),
-      readline = require('readline'),
-      chalk    = require('chalk');
+const {O_TRUNC} = require('constants');
+const fs = require('fs'),
+    readline = require('readline'),
+    chalk = require('chalk'),
+    path = require('path');
 
-const syntax  = require('./syntax/syntax.js');
+const syntax = require('./syntax/syntax.js');
 
 const log = console.log;
 
@@ -20,27 +21,26 @@ var output = [];
 var html_compiled = '';
 var linked_files = Array();
 myInterface.on('line', function (line) {
-    
+
     line_number++;
     output = LexicalAnalizer(line, line_number);
-    
+
     html_compiled += output[0];
 
-    if(output[1].file != undefined){
-        if(!fs.existsSync("./"+output[1].src)){
+    if (output[1].file != undefined) {
+        if (!fs.existsSync("./" + output[1].src)) {
             log(
-                " "+chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
+                " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
             process.exit();
-        }else{
+        } else {
             linked_files.push(output[1]);
         }
     }
 
 
+}).on('close', function (line) {
 
-}).on('close', function(line){
-
-    if (!fs.existsSync('./build')){
+    if (!fs.existsSync('./build')) {
         fs.mkdirSync('./build');
     }
 
@@ -49,81 +49,79 @@ myInterface.on('line', function (line) {
     });
 
     linked_files.forEach((linked_file) => {
-        
-        let file_url ={};
-        if(!linked_file.src.match("/")){
-            fs.copyFileSync(linked_file.src, './build/'+linked_file.src);
-        }else{
-            file_url = linked_file.src.split("/");
-            file_url.pop(file_url.length-1);
-            let file_dir = file_url.toString().replace(',',"/");
 
-            if(!fs.existsSync('./build/'+file_dir)){
-                fs.mkdirSync('./build/'+file_dir, {recursive: true});
+        let file_url = {};
+        if (!linked_file.src.match("/")) {
+            fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+        } else {
+            file_url = linked_file.src.split("/");
+            file_url.pop(file_url.length - 1);
+            let file_dir = file_url.toString().replace(',', "/");
+
+            if (!fs.existsSync('./build/' + file_dir)) {
+                fs.mkdirSync('./build/' + file_dir, {recursive: true});
                 fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
-            }else{
+            } else {
                 fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
             }
-            
+
         }
-        
+
         // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
-        
+
     });
-        
+
     log(chalk.green("Compiled *SUCCESSFULLY* \n"));
-    
+
 });
 
+function LexicalAnalizer(line, line_number) {
 
-
-function LexicalAnalizer(line, line_number){
-    
     let lex = line.match(/(?:[^\s']+|'[^']*')+/g);
 
-    if(lex == null){
+    if (lex == null) {
         return Parser();
-    }else{
+    } else {
 
         var attributes = [];
 
-        if(lex.length >= 2){
+        if (lex.length >= 2) {
 
             attributes['tag'] = lex[0];
             attributes['props'] = [];
-            for(let i = 1; i < lex.length; i++){
-                
-                attributes['props'][lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[0]] = 
+            for (let i = 1; i < lex.length; i++) {
+
+                attributes['props'][lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[0]] =
                     lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[1];
 
             }
             // console.log(attributes);
-        }else{
+        } else {
             attributes['tag'] = lex[0];
         }
 
         return Parser(attributes, line_number);
     }
 
-}   
+}
 
-function Parser(tokens = null, line_number){
-    
+function Parser(tokens = null, line_number) {
+
     var line;
     var files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
     var data = [2];
     data[1] = Array();
-    if(tokens == null){
+    if (tokens == null) {
         line = "";
         data[0] = line;
         return data;
-    }else{
-        
-        if(tokens['tag'] != '--'){
+    } else {
+
+        if (tokens['tag'] != '--') {
             syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
         }
-        
-        switch(tokens['tag']){
+
+        switch (tokens['tag']) {
 
             case '--':
                 line = '';
@@ -146,10 +144,9 @@ function Parser(tokens = null, line_number){
                 break;
             case 'meta':
                 line = '<meta ';
-                if(tokens.props['keywords'] != undefined){
+                if (tokens.props['keywords'] != undefined) {
                     line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
-                }else
-                if(tokens.props['description'] != undefined){
+                } else if (tokens.props['description'] != undefined) {
                     line += 'name="description" content="' + tokens.props['description'] + '"';
                 }
 
@@ -159,10 +156,10 @@ function Parser(tokens = null, line_number){
                 line += ' />';
                 break;
             case 'icon':
-                line = '<link rel="icon" href="'+formatValue(tokens.props['src'])+'" type="image/gif" sizes="16x16"></link>';
-                
-                files["file"]   = 'icon.png';
-                files["src"]    = formatValue(tokens.props['src']);
+                line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16"></link>';
+
+                files["file"] = 'icon.png';
+                files["src"] = formatValue(tokens.props['src']);
                 files["folder"] = "ROOT";
                 data[1] = files;
                 break
@@ -171,10 +168,10 @@ function Parser(tokens = null, line_number){
                 break;
             case 'style':
                 line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
-                
-                if(!tokens.props['src'].match("https://")){
-                    files["file"]   = 'main.css';
-                    files["src"]    = formatValue(tokens.props['src']);
+
+                if (!tokens.props['src'].match("https://")) {
+                    files["file"] = 'main.css';
+                    files["src"] = formatValue(tokens.props['src']);
                     files["folder"] = "css";
                     data[1] = files;
                 }
@@ -186,10 +183,10 @@ function Parser(tokens = null, line_number){
             case 'closebody':
                 line = '</body>';
                 break;
-            case 'div': 
+            case 'div':
                 line = '<div ';
-                for(key in tokens.props){
-                    line += key + '='+ tokens.props[key];
+                for (key in tokens.props) {
+                    line += key + '=' + tokens.props[key];
                 }
                 line += '>';
                 break;
@@ -197,14 +194,14 @@ function Parser(tokens = null, line_number){
                 line = '</div>';
                 break;
             case 'a':
-                line = '<a href='+tokens.props['href']+' id='+tokens.props['id']+'>' + 
-                        formatValue(tokens.props['value']) + '</a>';
+                line = '<a href=' + tokens.props['href'] + ' id=' + tokens.props['id'] + '>' +
+                    formatValue(tokens.props['value']) + '</a>';
                 break;
-            
-            case 'button': 
+
+            case 'button':
                 line = '<button ';
-                for(key in tokens.props){
-                    if(key != 'value') line += key + '='+ tokens.props[key];
+                for (key in tokens.props) {
+                    if (key != 'value') line += key + '=' + tokens.props[key];
                 }
                 line += '>' + formatValue(tokens.props['value']);
                 line += '</button>';
@@ -215,8 +212,8 @@ function Parser(tokens = null, line_number){
             case 'javascript':
                 line = '<script src=' + tokens.props['src'] + '></script>';
 
-                files["file"]   = 'main.js';
-                files["src"]    = formatValue(tokens.props['src']);
+                files["file"] = 'main.js';
+                files["src"] = formatValue(tokens.props['src']);
                 files["folder"] = "js";
                 data[1] = files;
 
@@ -224,25 +221,26 @@ function Parser(tokens = null, line_number){
 
             case 'input':
                 line = '<input ';
-                for(key in tokens.props){
-                    line += key + '='+ tokens.props[key];
+                for (key in tokens.props) {
+                    line += key + '=' + tokens.props[key];
                 }
                 line += ' />';
                 break;
-            
+
         }
     }
 
     data[0] = line;
-    
+
 
     return data;
 
 }
 
-function formatValue(value){
-
+function formatValue(value) {
     return value.replace("'", "").replace("'", "");
-
 }
 
+function getFiles({folder, extension}) {
+
+}
