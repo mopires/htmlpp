@@ -7,13 +7,13 @@ const fs = require('fs'),
     path = require('path');
 
 const syntax = require('./syntax/syntax.js');
-
+const {underline} = require("chalk");
 const log = console.log;
 
 console.log(chalk.greenBright("Compiling... \n"));
-
+let htmlpp_files = getFiles();
 var myInterface = readline.createInterface({
-    input: fs.createReadStream('index.htmlpp') // Needs to be wide for other files
+    input: fs.createReadStream('index.htmlpp')
 });
 
 var line_number = 0;
@@ -241,6 +241,54 @@ function formatValue(value) {
     return value.replace("'", "").replace("'", "");
 }
 
-function getFiles({folder, extension}) {
+function getFiles(subfolder = "./", htmlpp_files = new Array()) {
+    let folders;
+    let path = subfolder;
+    folders = fs.readdirSync(path);
+    folders.forEach((folder) => {
+        if (!fs.statSync(path+folder).isDirectory()) {
+            if (isHTMLPPFile(folder)) {
+                htmlpp_files.push({name: folder, path: path});
+            }
+        } else {
+            if (!isReservedFolder(folder)) {
+                folder = path + folder + "/";
+                htmlpp_files = (getFiles(folder, htmlpp_files));
+            }
+        }
+    });
+    return htmlpp_files;
+}
+function isReservedFolder (folder) {
+    let protected_dir = [".git", ".github", ".idea", "build", "syntax", "node_modules"];
+    if (protected_dir.indexOf(folder) != -1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function isHTMLPPFile (file) {
+    let file_extension = file.split(".")[file.split(".").length-1];
+    if (file_extension === "htmlpp") {
+        return true;
+    }
+}
+
+function isFolderEmpty (file_system, folder) {
+    file_system.readdir(folder, function(error, files) {
+        if (error) {
+            // some sort of error
+        } else {
+            if (files.length <= 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    });
+}
+
+class BlueAlchemy {
 
 }
