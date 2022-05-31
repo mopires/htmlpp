@@ -10,66 +10,77 @@ const log = console.log;
 console.log(chalk.greenBright("Compiling... \n"));
 let htmlpp_files = getFiles();
 htmlpp_files.forEach((file) => {
-    let myInterface = readline.createInterface({
-        input: fs.createReadStream(file.path + file.name)
-    });
-    compile(myInterface, file);
+    let file_content = readFile(file.path+file.name);
+    log("================================================" + file.name + "================================================");
+    compile(file_content, file);
 });
 
-function compile(readline_interface, file) {
+function compile(file_content, file) {
     let line_number = 0;
     let output = [];
     let html_compiled = '';
     let linked_files = Array();
-    readline_interface.on('line', function (line) {
-        line_number++;
-        output = LexicalAnalizer(line, line_number);
-
-        html_compiled += output[0];
-
-        if (output[1].file !== undefined) {
-            if (!fs.existsSync("./" + output[1].src)) {
-                log(
-                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in " +
-                    chalk.yellow(file.path + file.name) + "\n");
-                process.exit();
-            } else {
-                linked_files.push(output[1]);
-            }
+    // readline_interface.on('line', function (line) {
+    //     line_number++;
+    //     output = LexicalAnalizer(line, line_number);
+    //
+    //     html_compiled += output[0];
+    //
+    //     if (output[1].file !== undefined) {
+    //         if (!fs.existsSync("./" + output[1].src)) {
+    //             log(
+    //                 " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in " +
+    //                 chalk.yellow(file.path + file.name) + "\n");
+    //             process.exit();
+    //         } else {
+    //             linked_files.push(output[1]);
+    //         }
+    //     }
+    // })
+    //     .on('close', function () {
+    //     if (!fs.existsSync('./build')) {
+    //         fs.mkdirSync('./build');
+    //     }
+    //     if (file.path !== "" && !fs.existsSync('./build/' + file.path)) {
+    //         fs.mkdirSync('./build/' + file.path);
+    //     }
+    //
+    //     fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html_compiled, (e) => {
+    //         if (e) throw e;
+    //     });
+    //
+    //     linked_files.forEach((linked_file) => {
+    //         let file_url = {};
+    //         if (!linked_file.src.match("/")) {
+    //             fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+    //         } else {
+    //             file_url = linked_file.src.split("/");
+    //             file_url.pop(file_url.length - 1);
+    //             let file_dir = file_url.toString().replace(',', "/");
+    //
+    //             if (!fs.existsSync('./build/' + file_dir)) {
+    //                 fs.mkdirSync('./build/' + file_dir, {recursive: true});
+    //                 fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+    //             } else {
+    //                 fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+    //             }
+    //
+    //         }
+    //         // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+    //     });
+    //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
+    // });
+    let char_buffer = "";
+    file_content = Array.from(file_content);
+    file_content.forEach((char)=>{
+        if (char !== " " && char !== "\r" && char !== "\n") {
+            char_buffer = char_buffer + char;
+        } else if (char === " " && char_buffer.length !== 0) {
+            log(char_buffer);
+            char_buffer = "";
         }
-    }).on('close', function () {
-        if (!fs.existsSync('./build')) {
-            fs.mkdirSync('./build');
-        }
-        if (file.path !== "" && !fs.existsSync('./build/' + file.path)) {
-            fs.mkdirSync('./build/' + file.path);
-        }
-
-        fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html_compiled, (e) => {
-            if (e) throw e;
-        });
-
-        linked_files.forEach((linked_file) => {
-            let file_url = {};
-            if (!linked_file.src.match("/")) {
-                fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
-            } else {
-                file_url = linked_file.src.split("/");
-                file_url.pop(file_url.length - 1);
-                let file_dir = file_url.toString().replace(',', "/");
-
-                if (!fs.existsSync('./build/' + file_dir)) {
-                    fs.mkdirSync('./build/' + file_dir, {recursive: true});
-                    fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
-                } else {
-                    fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
-                }
-
-            }
-            // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
-        });
-        log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     });
+
 }
 
 function LexicalAnalizer(line, line_number) {
@@ -260,4 +271,13 @@ function isHTMLPPFile(file) {
 
 function swipeExtension(file) {
     return file.replace(".htmlpp", ".html");
+}
+
+function readFile (file) {
+    try {
+        const file_content = fs.readFileSync(file, { encoding: 'utf8' });
+        return file_content;
+    } catch (err) {
+        console.log(err);
+    }
 }
