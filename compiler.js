@@ -9,9 +9,9 @@ const log = console.log;
 
 console.log(chalk.greenBright("Compiling... \n"));
 let htmlpp_files = getFiles();
-htmlpp_files.forEach( (file) => {
+htmlpp_files.forEach((file) => {
     let myInterface = readline.createInterface({
-        input: fs.createReadStream(file.path+file.name)
+        input: fs.createReadStream(file.path + file.name)
     });
     compile(myInterface, file);
 });
@@ -30,8 +30,8 @@ function compile(readline_interface, file) {
         if (output[1].file !== undefined) {
             if (!fs.existsSync("./" + output[1].src)) {
                 log(
-                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in "+
-                    chalk.yellow(file.path+file.name)+ "\n");
+                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in " +
+                    chalk.yellow(file.path + file.name) + "\n");
                 process.exit();
             } else {
                 linked_files.push(output[1]);
@@ -41,8 +41,8 @@ function compile(readline_interface, file) {
         if (!fs.existsSync('./build')) {
             fs.mkdirSync('./build');
         }
-        if (file.path !== "" && !fs.existsSync('./build/'+file.path)) {
-            fs.mkdirSync('./build/'+file.path);
+        if (file.path !== "" && !fs.existsSync('./build/' + file.path)) {
+            fs.mkdirSync('./build/' + file.path);
         }
 
         fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html_compiled, (e) => {
@@ -68,7 +68,7 @@ function compile(readline_interface, file) {
             }
             // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
         });
-        log(chalk.green(file.path+file.name+ " compiled *SUCCESSFULLY*"));
+        log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     });
 }
 
@@ -232,7 +232,7 @@ function getFiles(subfolder = "./", htmlpp_files = []) {
     let path = subfolder;
     folders = fs.readdirSync(path);
     folders.forEach((folder) => {
-        if (!fs.statSync(path+folder).isDirectory()) {
+        if (!fs.statSync(path + folder).isDirectory()) {
             if (isHTMLPPFile(folder)) {
                 htmlpp_files.push({name: folder, path: path.replace("./", "")});
             }
@@ -245,22 +245,19 @@ function getFiles(subfolder = "./", htmlpp_files = []) {
     });
     return htmlpp_files;
 }
-function isReservedFolder (folder) {
+
+function isReservedFolder(folder) {
     let protected_dir = [".git", ".github", ".idea", "build", "syntax", "node_modules"];
-    if (protected_dir.indexOf(folder) !== -1) {
-        return true;
-    } else {
-        return false;
-    }
+    return protected_dir.indexOf(folder) !== -1;
 }
 
-function isHTMLPPFile (file) {
-    let file_extension = file.split(".")[file.split(".").length-1];
+function isHTMLPPFile(file) {
+    let file_extension = file.split(".")[file.split(".").length - 1];
     if (file_extension === "htmlpp") {
         return true;
     }
 }
 
-function swipeExtension (file) {
+function swipeExtension(file) {
     return file.replace(".htmlpp", ".html");
 }
