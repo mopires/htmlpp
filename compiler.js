@@ -12,68 +12,67 @@ const log = console.log;
 
 console.log(chalk.greenBright("Compiling... \n"));
 let htmlpp_files = getFiles();
-var myInterface = readline.createInterface({
-    input: fs.createReadStream('index.htmlpp')
+htmlpp_files.forEach( (file) => {
+    let myInterface = readline.createInterface({
+        input: fs.createReadStream(file.path+file.name)
+    });
+    compile(myInterface, file);
 });
 
-var line_number = 0;
-var output = [];
-var html_compiled = '';
-var linked_files = Array();
-myInterface.on('line', function (line) {
+function compile(interface, file) {
+    var line_number = 0;
+    var output = [];
+    var html_compiled = '';
+    var linked_files = Array();
+    interface.on('line', function (line) {
+        line_number++;
+        output = LexicalAnalizer(line, line_number);
 
-    line_number++;
-    output = LexicalAnalizer(line, line_number);
+        html_compiled += output[0];
 
-    html_compiled += output[0];
-
-    if (output[1].file != undefined) {
-        if (!fs.existsSync("./" + output[1].src)) {
-            log(
-                " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
-            process.exit();
-        } else {
-            linked_files.push(output[1]);
+        if (output[1].file != undefined) {
+            if (!fs.existsSync("./" + output[1].src)) {
+                log(
+                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
+                process.exit();
+            } else {
+                linked_files.push(output[1]);
+            }
         }
-    }
+    }).on('close', function (line) {
+        if (!fs.existsSync('./build')) {
+            fs.mkdirSync('./build');
+        }
+        if (file.path != "" && !fs.existsSync('./build/'+file.path)) {
+            fs.mkdirSync('./build/'+file.path);
+        }
 
+        fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html_compiled, (e) => {
+            if (e) throw e;
+        });
 
-}).on('close', function (line) {
-
-    if (!fs.existsSync('./build')) {
-        fs.mkdirSync('./build');
-    }
-
-    fs.writeFileSync('./build/index.html', html_compiled, (e) => {
-        if (e) throw e;
-    });
-
-    linked_files.forEach((linked_file) => {
-
-        let file_url = {};
-        if (!linked_file.src.match("/")) {
-            fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
-        } else {
-            file_url = linked_file.src.split("/");
-            file_url.pop(file_url.length - 1);
-            let file_dir = file_url.toString().replace(',', "/");
-
-            if (!fs.existsSync('./build/' + file_dir)) {
-                fs.mkdirSync('./build/' + file_dir, {recursive: true});
+        linked_files.forEach((linked_file) => {
+            let file_url = {};
+            if (!linked_file.src.match("/")) {
                 fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
             } else {
-                fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+                file_url = linked_file.src.split("/");
+                file_url.pop(file_url.length - 1);
+                let file_dir = file_url.toString().replace(',', "/");
+
+                if (!fs.existsSync('./build/' + file_dir)) {
+                    fs.mkdirSync('./build/' + file_dir, {recursive: true});
+                    fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+                } else {
+                    fs.copyFileSync(linked_file.src, './build/' + linked_file.src);
+                }
+
             }
-
-        }
-
-        // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
-
+            // fs.copyFileSync(linked_files[i].src, './build/' + linked_files[i].src);
+        });
+        log(chalk.green(file.path+file.name+ " compiled *SUCCESSFULLY*"));
     });
-
-    log(chalk.green("Compiled *SUCCESSFULLY* \n"));
-
-});
+}
 
 function LexicalAnalizer(line, line_number) {
 
@@ -90,10 +89,8 @@ function LexicalAnalizer(line, line_number) {
             attributes['tag'] = lex[0];
             attributes['props'] = [];
             for (let i = 1; i < lex.length; i++) {
-
                 attributes['props'][lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[0]] =
                     lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[1];
-
             }
             // console.log(attributes);
         } else {
@@ -149,10 +146,6 @@ function Parser(tokens = null, line_number) {
                 } else if (tokens.props['description'] != undefined) {
                     line += 'name="description" content="' + tokens.props['description'] + '"';
                 }
-
-                // for(key in tokens.props){
-                //     line += key + '='+ tokens.props[key];
-                // }
                 line += ' />';
                 break;
             case 'icon':
@@ -226,15 +219,10 @@ function Parser(tokens = null, line_number) {
                 }
                 line += ' />';
                 break;
-
         }
     }
-
     data[0] = line;
-
-
     return data;
-
 }
 
 function formatValue(value) {
@@ -248,7 +236,7 @@ function getFiles(subfolder = "./", htmlpp_files = new Array()) {
     folders.forEach((folder) => {
         if (!fs.statSync(path+folder).isDirectory()) {
             if (isHTMLPPFile(folder)) {
-                htmlpp_files.push({name: folder, path: path});
+                htmlpp_files.push({name: folder, path: path.replace("./", "")});
             }
         } else {
             if (!isReservedFolder(folder)) {
@@ -273,6 +261,10 @@ function isHTMLPPFile (file) {
     if (file_extension === "htmlpp") {
         return true;
     }
+}
+
+function swipeExtension (file) {
+    return file.replace(".htmlpp", ".html");
 }
 
 function isFolderEmpty (file_system, folder) {
