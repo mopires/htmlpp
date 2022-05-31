@@ -33,7 +33,8 @@ function compile(interface, file) {
         if (output[1].file != undefined) {
             if (!fs.existsSync("./" + output[1].src)) {
                 log(
-                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + "\n");
+                    " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in "+
+                    chalk.yellow(file.path+file.name)+ "\n");
                 process.exit();
             } else {
                 linked_files.push(output[1]);
