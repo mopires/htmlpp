@@ -280,7 +280,3 @@ function isFolderEmpty (file_system, folder) {
         }
     });
 }
-
-class BlueAlchemy {
-
-}
