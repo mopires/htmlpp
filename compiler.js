@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 
-const {O_TRUNC} = require('constants');
 const fs = require('fs'),
     readline = require('readline'),
-    chalk = require('chalk'),
-    path = require('path');
+    chalk = require('chalk');
 
 const syntax = require('./syntax/syntax.js');
-const {underline} = require("chalk");
 const log = console.log;
 
 console.log(chalk.greenBright("Compiling... \n"));
@@ -19,18 +16,18 @@ htmlpp_files.forEach( (file) => {
     compile(myInterface, file);
 });
 
-function compile(interface, file) {
-    var line_number = 0;
-    var output = [];
-    var html_compiled = '';
-    var linked_files = Array();
-    interface.on('line', function (line) {
+function compile(readline_interface, file) {
+    let line_number = 0;
+    let output = [];
+    let html_compiled = '';
+    let linked_files = Array();
+    readline_interface.on('line', function (line) {
         line_number++;
         output = LexicalAnalizer(line, line_number);
 
         html_compiled += output[0];
 
-        if (output[1].file != undefined) {
+        if (output[1].file !== undefined) {
             if (!fs.existsSync("./" + output[1].src)) {
                 log(
                     " " + chalk.red("Error: \n") + " The linked file " + chalk.redBright(output[1].src) + " doesn't exists in the especified source " + chalk.yellow("at line: " + line_number) + " in "+
@@ -40,11 +37,11 @@ function compile(interface, file) {
                 linked_files.push(output[1]);
             }
         }
-    }).on('close', function (line) {
+    }).on('close', function () {
         if (!fs.existsSync('./build')) {
             fs.mkdirSync('./build');
         }
-        if (file.path != "" && !fs.existsSync('./build/'+file.path)) {
+        if (file.path !== "" && !fs.existsSync('./build/'+file.path)) {
             fs.mkdirSync('./build/'+file.path);
         }
 
@@ -83,7 +80,7 @@ function LexicalAnalizer(line, line_number) {
         return Parser();
     } else {
 
-        var attributes = [];
+        let attributes = [];
 
         if (lex.length >= 2) {
 
@@ -105,9 +102,9 @@ function LexicalAnalizer(line, line_number) {
 
 function Parser(tokens = null, line_number) {
 
-    var line;
-    var files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
-    var data = [2];
+    let line;
+    let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
+    let data = [2];
     data[1] = Array();
     if (tokens == null) {
         line = "";
@@ -115,7 +112,7 @@ function Parser(tokens = null, line_number) {
         return data;
     } else {
 
-        if (tokens['tag'] != '--') {
+        if (tokens['tag'] !== '--') {
             syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
         }
 
@@ -142,15 +139,15 @@ function Parser(tokens = null, line_number) {
                 break;
             case 'meta':
                 line = '<meta ';
-                if (tokens.props['keywords'] != undefined) {
+                if (tokens.props['keywords'] !== undefined) {
                     line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
-                } else if (tokens.props['description'] != undefined) {
+                } else if (tokens.props['description'] !== undefined) {
                     line += 'name="description" content="' + tokens.props['description'] + '"';
                 }
                 line += ' />';
                 break;
             case 'icon':
-                line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16"></link>';
+                line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16" />';
 
                 files["file"] = 'icon.png';
                 files["src"] = formatValue(tokens.props['src']);
@@ -195,7 +192,7 @@ function Parser(tokens = null, line_number) {
             case 'button':
                 line = '<button ';
                 for (key in tokens.props) {
-                    if (key != 'value') line += key + '=' + tokens.props[key];
+                    if (key !== 'value') line += key + '=' + tokens.props[key];
                 }
                 line += '>' + formatValue(tokens.props['value']);
                 line += '</button>';
@@ -230,7 +227,7 @@ function formatValue(value) {
     return value.replace("'", "").replace("'", "");
 }
 
-function getFiles(subfolder = "./", htmlpp_files = new Array()) {
+function getFiles(subfolder = "./", htmlpp_files = []) {
     let folders;
     let path = subfolder;
     folders = fs.readdirSync(path);
@@ -250,7 +247,7 @@ function getFiles(subfolder = "./", htmlpp_files = new Array()) {
 }
 function isReservedFolder (folder) {
     let protected_dir = [".git", ".github", ".idea", "build", "syntax", "node_modules"];
-    if (protected_dir.indexOf(folder) != -1) {
+    if (protected_dir.indexOf(folder) !== -1) {
         return true;
     } else {
         return false;
@@ -266,18 +263,4 @@ function isHTMLPPFile (file) {
 
 function swipeExtension (file) {
     return file.replace(".htmlpp", ".html");
-}
-
-function isFolderEmpty (file_system, folder) {
-    file_system.readdir(folder, function(error, files) {
-        if (error) {
-            // some sort of error
-        } else {
-            if (files.length <= 0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    });
 }
