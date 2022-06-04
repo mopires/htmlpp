@@ -2,16 +2,17 @@
 
 const fs = require('fs'),
     readline = require('readline'),
-    chalk = require('chalk');
+    chalk = require('chalk'),
+    os = require("os");
 
 const syntax = require('./syntax/syntax.js');
 const log = console.log;
 
 console.log(chalk.greenBright("Compiling... \n"));
 let htmlpp_files = getFiles();
+let expression = [], syntax_expression = [];
 htmlpp_files.forEach((file) => {
-    let file_content = readFile(file.path+file.name);
-    log("================================================" + file.name + "================================================");
+    let file_content = readFile(file.path + file.name);
     compile(file_content, file);
 });
 
@@ -70,17 +71,96 @@ function compile(file_content, file) {
     //     });
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
-    let char_buffer = "";
-    file_content = Array.from(file_content);
-    file_content.forEach((char)=>{
-        if (char !== " " && char !== "\r" && char !== "\n") {
-            char_buffer = char_buffer + char;
-        } else if (char === " " && char_buffer.length !== 0) {
-            log(char_buffer);
-            char_buffer = "";
-        }
-    });
+    log(lex(file_content, file));
+}
 
+function lex(file_content, file) {
+    let line = 0;
+    let char_buffer = "";
+    let column = 0;
+    file_content = Array.from(file_content);
+    while (column < file_content.length) {
+        switch (file_content[column]) {
+            case "/":
+                if (file_content[column+1] === "/") {
+                    let comment = file_content[column];
+                    while (true) {
+                        nextColumn();
+                        if (file_content[column] !== os.EOL) {
+                            comment = comment + file_content[column];
+                        } else {
+                            break;
+                        }
+                    }
+                    syntax_expression.push({"comment": comment, "col": column});
+                    nextColumn();
+                }
+                break;
+            case " ":
+                if (char_buffer.length > 0) {
+                    syntax_expression.push({"token": char_buffer, "col": column});
+                    char_buffer = "";
+                }
+                nextColumn();
+                break;
+            case os.EOL:
+                line = line + 1;
+                if (file_content[column-1] !== os.EOL || file_content[column-1] !== " ") {
+                    if (char_buffer.length > 0) {
+                        syntax_expression.push({"token": char_buffer, "col": column});
+                        char_buffer = "";
+                    }
+                }
+                syntax_expression.push({"delimiter": "OPEN_WITH_ENDLINE", "col": column});
+                nextColumn();
+                break;
+            case "=":
+                if (file_content[column - 1] !== " ") {
+                    syntax_expression.push({"token": char_buffer, "col": column});
+                    syntax_expression.push({"attribution": file_content[column], "col": column});
+                    char_buffer = ""
+                }
+                nextColumn();
+                break
+            case "\'":
+                let single_quotes_content = file_content[column];
+                while (true) {
+                    nextColumn();
+                    single_quotes_content = single_quotes_content + file_content[column];//send to expression
+                    if (file_content[column] === "\'") {
+                        break;
+                    }
+                }
+                syntax_expression.push({"string": single_quotes_content, "col": column});
+                nextColumn();
+                break;
+            case "\"":
+                let quotes_content = file_content[column];
+                while (true) {
+                    nextColumn();
+                    quotes_content = quotes_content + file_content[column];//send to expression
+                    if (file_content[column] === "\"") {
+                        break;
+                    }
+                }
+                syntax_expression.push({"string": quotes_content, "col": column});
+                nextColumn();
+                break
+            default:
+                char_buffer = char_buffer + file_content[column];
+                if (file_content[column+1] === undefined) {
+                    syntax_expression.push({"token": char_buffer, "col": column});
+                    char_buffer = "";
+                }
+                nextColumn();
+                break;
+        }
+    }
+
+    function nextColumn() {
+        column = column + 1;
+    }
+    return syntax_expression;
 }
 
 function LexicalAnalizer(line, line_number) {
@@ -273,9 +353,9 @@ function swipeExtension(file) {
     return file.replace(".htmlpp", ".html");
 }
 
-function readFile (file) {
+function readFile(file) {
     try {
-        const file_content = fs.readFileSync(file, { encoding: 'utf8' });
+        const file_content = fs.readFileSync(file, {encoding: 'utf8'});
         return file_content;
     } catch (err) {
         console.log(err);

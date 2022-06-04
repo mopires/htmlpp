@@ -1,24 +1,11 @@
 html
     head
-        meta description='This is a page made with html++!'
-        icon src='htmlpp.png'
-        meta keywords='htmlpp, js, node'
-        title value='My page with html++'
-        style src='https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
-        -- this is amer... a comment
+        meta description="This is a page made with html++!"
+        // this is amer... a comment
     closehead
     body
         div class='container' id='main'
-            div class='row'
-                div class='col-lg-6 '
-                    a href='https://google.com' value='Link to google' id='linkG'
-                    input type='text' placeholder='Name' class='form-control'
-                closediv
-                div class='col-lg-6 bg-green' id='div1'
-                    p value='whats up? would like to check ou my sound?'
-                    a href='https://juggnix.com' value='juggnix'
-                    button value='primary button!' class='btn btn-primary'
-                closediv
-            closediv
+            hello world
         closediv
+        javascript src = "main.js"
     closebody
