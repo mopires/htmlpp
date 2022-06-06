@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-const fs = require('fs'),
-    readline = require('readline'),
-    chalk = require('chalk'),
-    os = require("os");
+const fs = require('fs'), readline = require('readline'), chalk = require('chalk'), os = require("os");
 
 const syntax = require('./syntax/syntax.js');
 const log = console.log;
@@ -71,18 +68,30 @@ function compile(file_content, file) {
     //     });
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
-    log(lex(file_content, file));
+    let html = getTokens(file_content, file);
+
 }
 
-function lex(file_content, file) {
+function getTokens(file_content, file) {
     let line = 0;
     let char_buffer = "";
     let column = 0;
+    let parent_symbol = "";
+    let token_id = ""
+
+    function nextColumn() {
+        column = column + 1;
+    }
+
+    function tokenId(token_name) {
+        return token_name + Math.floor((Math.random() * (Number.MAX_VALUE / 1.618033988749)));
+    }
+
     file_content = Array.from(file_content);
     while (column < file_content.length) {
         switch (file_content[column]) {
             case "/":
-                if (file_content[column+1] === "/") {
+                if (file_content[column + 1] === "/") {
                     let comment = file_content[column];
                     while (true) {
                         nextColumn();
@@ -92,34 +101,71 @@ function lex(file_content, file) {
                             break;
                         }
                     }
-                    syntax_expression.push({"comment": comment, "col": column});
+                    syntax_expression.push({"comment": comment, "column": column, "line": line});
                     nextColumn();
                 }
                 break;
             case " ":
                 if (char_buffer.length > 0) {
-                    syntax_expression.push({"token": char_buffer, "col": column});
+                    token_id = tokenId(char_buffer);
+                    syntax_expression.push({
+                        "symbol": char_buffer,
+                        "column": column,
+                        "line": line,
+                        "token_id": token_id,
+                        "parent_id": parent_symbol
+                    });
                     char_buffer = "";
+                    parent_symbol = token_id;
                 }
                 nextColumn();
                 break;
             case os.EOL:
                 line = line + 1;
-                if (file_content[column-1] !== os.EOL || file_content[column-1] !== " ") {
+                if (file_content[column - 1] !== os.EOL || file_content[column - 1] !== " ") {
                     if (char_buffer.length > 0) {
-                        syntax_expression.push({"token": char_buffer, "col": column});
+                        token_id = tokenId(char_buffer);
+                        syntax_expression.push({
+                            "symbol": char_buffer,
+                            "column": column,
+                            "line": line,
+                            "token_id": token_id,
+                            "parent_id": parent_symbol
+                        });
                         char_buffer = "";
+                        parent_symbol = token_id;
                     }
                 }
-                syntax_expression.push({"delimiter": "OPEN_WITH_ENDLINE", "col": column});
+                syntax_expression.push({
+                    "delimiter": "OPEN_WITH_ENDLINE",
+                    "column": column,
+                    "line": line,
+                    "token_id": token_id,
+                    "parent_id": parent_symbol
+                });
+                parent_symbol = token_id;
                 nextColumn();
                 break;
             case "=":
-                if (file_content[column - 1] !== " ") {
-                    syntax_expression.push({"token": char_buffer, "col": column});
-                    syntax_expression.push({"attribution": file_content[column], "col": column});
-                    char_buffer = ""
+                if (char_buffer.length > 0) {
+                    token_id = tokenId(char_buffer);
+                    syntax_expression.push({
+                        "attribution": char_buffer,
+                        "column": column,
+                        "line": line,
+                        "token_id": token_id,
+                        "parent_id": parent_symbol
+                    });
+                    char_buffer = "";
                 }
+                syntax_expression.push({
+                    "attribution_sign": file_content[column],
+                    "column": column,
+                    "line": line,
+                    "token_id": "",
+                    "parent_id": parent_symbol
+                });
+                parent_symbol = token_id;
                 nextColumn();
                 break
             case "\'":
@@ -131,7 +177,14 @@ function lex(file_content, file) {
                         break;
                     }
                 }
-                syntax_expression.push({"string": single_quotes_content, "col": column});
+                token_id = tokenId(char_buffer);
+                syntax_expression.push({
+                    "string": single_quotes_content,
+                    "column": column,
+                    "line": line,
+                    "token_id": token_id,
+                    "parent_id": parent_symbol
+                });
                 nextColumn();
                 break;
             case "\"":
@@ -143,174 +196,240 @@ function lex(file_content, file) {
                         break;
                     }
                 }
-                syntax_expression.push({"string": quotes_content, "col": column});
+                token_id = tokenId(char_buffer);
+                syntax_expression.push({
+                    "string": quotes_content,
+                    "column": column,
+                    "token_id": token_id,
+                    "parent_id": parent_symbol
+                });
+                parent_symbol = token_id;
                 nextColumn();
                 break
             default:
                 char_buffer = char_buffer + file_content[column];
-                if (file_content[column+1] === undefined) {
-                    syntax_expression.push({"token": char_buffer, "col": column});
+                if (file_content[column + 1] === undefined) {
+                    token_id = tokenId(char_buffer);
+                    syntax_expression.push({
+                        "symbol": char_buffer,
+                        "column": column,
+                        "line": line,
+                        "token_id": token_id,
+                        "parent_id": parent_symbol
+                    });
                     char_buffer = "";
+                    parent_symbol = token_id;
                 }
                 nextColumn();
                 break;
         }
     }
-
-    function nextColumn() {
-        column = column + 1;
-    }
-    return syntax_expression;
+    return LexicalAnalizer(syntax_expression);
 }
 
-function LexicalAnalizer(line, line_number) {
+function LexicalAnalizer(tokens = []) {
 
-    let lex = line.match(/(?:[^\s']+|'[^']*')+/g);
+    let html = {};
 
-    if (lex == null) {
-        return Parser();
-    } else {
-
-        let attributes = [];
-
-        if (lex.length >= 2) {
-
-            attributes['tag'] = lex[0];
-            attributes['props'] = [];
-            for (let i = 1; i < lex.length; i++) {
-                attributes['props'][lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[0]] =
-                    lex[i].match(/(?:[^\s'=]+|'[^']*')+/g)[1];
-            }
-            // console.log(attributes);
+    function createElement(tokenElement) {
+        let element = {
+            "id": "",
+            "parent_id": "",
+            "tag_name": "",
+            "attr": [],
+            "delimiter": "",
+            "child_nodes": []
+        };
+        element.id = tokenElement.token_id;
+        element.parent_id = tokenElement.parent_id;
+        element.tag_name = tokenElement.symbol;
+        //element.delimiter = tokens.filter((token) => token.symbol == "close"+element.tagName)[0].symbol;
+        if (Object.entries(html).length === 0) {
+            html = element;
         } else {
-            attributes['tag'] = lex[0];
+            //how to insert the child node in its correct parent ?
+            if (html.child_nodes.length === 0) {
+                html.child_nodes.push(element);
+            } else {
+                html.child_nodes.forEach(node => {
+                    if (node.id === element.parent_id ) {
+                        node.child_nodes.push(element);
+                    }
+                })
+            }
         }
-
-        return Parser(attributes, line_number);
     }
 
-}
+    function addAttribute (tokenElement, tokens, index) {
+        let attr = {
+            "name": tokenElement.attribution,
+            "sign": "=",
+            "value": tokens[index+2].string
+        };
+        if (html.id === tokenElement.parent_id) {
+            html.attr.push(attr)
+        } else {
+            html.child_nodes.forEach((node) => {
+                if (node.id === tokenElement.parent_id) {
+                    node.attr.push(attr);
+                }
+            });
+        }
+    }
 
-function Parser(tokens = null, line_number) {
-
-    let line;
-    let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
-    let data = [2];
-    data[1] = Array();
     if (tokens == null) {
-        line = "";
-        data[0] = line;
-        return data;
+        return false;
     } else {
+        tokens.forEach((token, index) => {
+            for (key in token) {
+                switch (key) {
+                    case "symbol":
+                            createElement(token);
+                        break;
+                    case "attribution":
+                            addAttribute(token, tokens, index);
+                        break;
+                    case "string":
 
-        if (tokens['tag'] !== '--') {
-            syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
-        }
+                        break;
+                    case "delimiter":
+                        break;
+                    case "comment":
+                        //verbose to put comments in build
 
-        switch (tokens['tag']) {
-
-            case '--':
-                line = '';
-                break;
-            case '!DOCTYPE':
-                log(chalk.yellowBright("You don't need to implement a DOCTYPE..."));
-                line = '';
-                break;
-            case 'html':
-                line = '<!DOCTYPE html>'
-                line += '<html>';
-                break;
-            case 'head':
-                line = '<head>'
-                line += '<meta charset="utf-8" />'
-                line += '<meta name="viewport" content="width=device-width, initial-scale=1" />';
-                break;
-            case 'closehead':
-                line = '</head>';
-                break;
-            case 'meta':
-                line = '<meta ';
-                if (tokens.props['keywords'] !== undefined) {
-                    line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
-                } else if (tokens.props['description'] !== undefined) {
-                    line += 'name="description" content="' + tokens.props['description'] + '"';
+                        break;
                 }
-                line += ' />';
-                break;
-            case 'icon':
-                line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16" />';
-
-                files["file"] = 'icon.png';
-                files["src"] = formatValue(tokens.props['src']);
-                files["folder"] = "ROOT";
-                data[1] = files;
-                break
-            case 'title':
-                line = '<title>' + formatValue(tokens.props['value']) + '</title>';
-                break;
-            case 'style':
-                line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
-
-                if (!tokens.props['src'].match("https://")) {
-                    files["file"] = 'main.css';
-                    files["src"] = formatValue(tokens.props['src']);
-                    files["folder"] = "css";
-                    data[1] = files;
-                }
-
-                break;
-            case 'body':
-                line = '<body>';
-                break;
-            case 'closebody':
-                line = '</body>';
-                break;
-            case 'div':
-                line = '<div ';
-                for (key in tokens.props) {
-                    line += key + '=' + tokens.props[key];
-                }
-                line += '>';
-                break;
-            case 'closediv':
-                line = '</div>';
-                break;
-            case 'a':
-                line = '<a href=' + tokens.props['href'] + ' id=' + tokens.props['id'] + '>' +
-                    formatValue(tokens.props['value']) + '</a>';
-                break;
-
-            case 'button':
-                line = '<button ';
-                for (key in tokens.props) {
-                    if (key !== 'value') line += key + '=' + tokens.props[key];
-                }
-                line += '>' + formatValue(tokens.props['value']);
-                line += '</button>';
-                break;
-            case 'p':
-                line = '<p>' + formatValue(tokens.props['value']) + '</p>';
-                break;
-            case 'javascript':
-                line = '<script src=' + tokens.props['src'] + '></script>';
-
-                files["file"] = 'main.js';
-                files["src"] = formatValue(tokens.props['src']);
-                files["folder"] = "js";
-                data[1] = files;
-
-                break;
-
-            case 'input':
-                line = '<input ';
-                for (key in tokens.props) {
-                    line += key + '=' + tokens.props[key];
-                }
-                line += ' />';
-                break;
-        }
+            }
+        });
+        log(html);
+        return Parser(html);
     }
-    data[0] = line;
+
+    function Parser(html = null) {
+
+        let line;
+        let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
+        let data = [2];
+        data[1] = Array();
+
+        for (key in html) {
+            if (key === "child_nodes") {
+                if (html[key].length > 0) {
+                    html[key].forEach(key => {
+                        //log(key)
+                    });
+                }
+            }
+        }
+        // if (tokens['tag'] !== '--') {
+        //     syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
+        // }
+        //
+        // switch (tokens['tag']) {
+        //
+        //     case '--':
+        //         line = '';
+        //         break;
+        //     case '!DOCTYPE':
+        //         log(chalk.yellowBright("You don't need to implement a DOCTYPE..."));
+        //         line = '';
+        //         break;
+        //     case 'html':
+        //         line = '<!DOCTYPE html>'
+        //         line += '<html>';
+        //         break;
+        //     case 'head':
+        //         line = '<head>'
+        //         line += '<meta charset="utf-8" />'
+        //         line += '<meta name="viewport" content="width=device-width, initial-scale=1" />';
+        //         break;
+        //     case 'closehead':
+        //         line = '</head>';
+        //         break;
+        //     case 'meta':
+        //         line = '<meta ';
+        //         if (tokens.props['keywords'] !== undefined) {
+        //             line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
+        //         } else if (tokens.props['description'] !== undefined) {
+        //             line += 'name="description" content="' + tokens.props['description'] + '"';
+        //         }
+        //         line += ' />';
+        //         break;
+        //     case 'icon':
+        //         line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16" />';
+        //
+        //         files["file"] = 'icon.png';
+        //         files["src"] = formatValue(tokens.props['src']);
+        //         files["folder"] = "ROOT";
+        //         data[1] = files;
+        //         break
+        //     case 'title':
+        //         line = '<title>' + formatValue(tokens.props['value']) + '</title>';
+        //         break;
+        //     case 'style':
+        //         line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
+        //
+        //         if (!tokens.props['src'].match("https://")) {
+        //             files["file"] = 'main.css';
+        //             files["src"] = formatValue(tokens.props['src']);
+        //             files["folder"] = "css";
+        //             data[1] = files;
+        //         }
+        //
+        //         break;
+        //     case 'body':
+        //         line = '<body>';
+        //         break;
+        //     case 'closebody':
+        //         line = '</body>';
+        //         break;
+        //     case 'div':
+        //         line = '<div ';
+        //         for (key in tokens.props) {
+        //             line += key + '=' + tokens.props[key];
+        //         }
+        //         line += '>';
+        //         break;
+        //     case 'closediv':
+        //         line = '</div>';
+        //         break;
+        //     case 'a':
+        //         line = '<a href=' + tokens.props['href'] + ' id=' + tokens.props['id'] + '>' +
+        //             formatValue(tokens.props['value']) + '</a>';
+        //         break;
+        //
+        //     case 'button':
+        //         line = '<button ';
+        //         for (key in tokens.props) {
+        //             if (key !== 'value') line += key + '=' + tokens.props[key];
+        //         }
+        //         line += '>' + formatValue(tokens.props['value']);
+        //         line += '</button>';
+        //         break;
+        //     case 'p':
+        //         line = '<p>' + formatValue(tokens.props['value']) + '</p>';
+        //         break;
+        //     case 'javascript':
+        //         line = '<script src=' + tokens.props['src'] + '></script>';
+        //
+        //         files["file"] = 'main.js';
+        //         files["src"] = formatValue(tokens.props['src']);
+        //         files["folder"] = "js";
+        //         data[1] = files;
+        //
+        //         break;
+        //
+        //     case 'input':
+        //         line = '<input ';
+        //         for (key in tokens.props) {
+        //             line += key + '=' + tokens.props[key];
+        //         }
+        //         line += ' />';
+        //         break;
+        // }
+    }
+
+    //data[0] = line;
     return data;
 }
 

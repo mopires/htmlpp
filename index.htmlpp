@@ -1,4 +1,4 @@
-html
+html lang="pt-br"
     head
         meta description="This is a page made with html++!"
         // this is amer... a comment
@@ -9,3 +9,4 @@ html
         closediv
         javascript src = "main.js"
     closebody
+closehtml
