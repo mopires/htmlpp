@@ -69,7 +69,7 @@ function compile(file_content, file) {
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
     let html = getTokens(file_content, file);
-
+    console.log(html)
 }
 
 function getTokens(file_content, file) {
@@ -84,7 +84,7 @@ function getTokens(file_content, file) {
     }
 
     function tokenId(token_name) {
-        return token_name + Math.floor((Math.random() * (Number.MAX_VALUE / 1.618033988749)));
+        return token_name + Math.floor((Math.random() * 10000));
     }
 
     file_content = Array.from(file_content);
@@ -243,7 +243,6 @@ function LexicalAnalizer(tokens = []) {
         element.id = tokenElement.token_id;
         element.parent_id = tokenElement.parent_id;
         element.tag_name = tokenElement.symbol;
-        //element.delimiter = tokens.filter((token) => token.symbol == "close"+element.tagName)[0].symbol;
         if (Object.entries(html).length === 0) {
             html = element;
         } else {
@@ -251,30 +250,56 @@ function LexicalAnalizer(tokens = []) {
             if (html.child_nodes.length === 0) {
                 html.child_nodes.push(element);
             } else {
-                html.child_nodes.forEach(node => {
-                    if (node.id === element.parent_id ) {
-                        node.child_nodes.push(element);
-                    }
-                })
+                let subindex = 0;
+                function checkParent (chield_nodes, token) {
+                    chield_nodes.forEach((node, index) => {
+                        if (node.id != token.parent_id) {
+                            if (index === chield_nodes.length-1){
+                                while (subindex < chield_nodes.length-1) {
+                                    checkParent(chield_nodes[subindex], token);
+                                    subindex = subindex + 1;
+                                }
+                            }
+                        } else {
+                            node.child_nodes.push(token);
+                        }
+                    });
+                }
+                checkParent(html.child_nodes, element);
             }
         }
     }
 
-    function addAttribute (tokenElement, tokens, index) {
+    function addAttribute(tokenAttribute, tokens, index) {
         let attr = {
-            "name": tokenElement.attribution,
+            "name": tokenAttribute.attribution,
             "sign": "=",
-            "value": tokens[index+2].string
+            "value": tokens[index + 2].string
         };
-        if (html.id === tokenElement.parent_id) {
+        if (html.id === tokenAttribute.parent_id) {
             html.attr.push(attr)
         } else {
-            html.child_nodes.forEach((node) => {
-                if (node.id === tokenElement.parent_id) {
-                    node.attr.push(attr);
-                }
-            });
+            let subindex = 0;
+            function checkParent (chield_nodes, token) {
+                chield_nodes.forEach((node, index) => {
+                    if (node.id !== token.parent_id) {
+                        if (index === chield_nodes.length-1){
+                            log(subindex , chield_nodes.length-1)
+                            while (subindex < chield_nodes.length) {
+                                log(chield_nodes[subindex])
+                                checkParent(chield_nodes[subindex].child_nodes, token);
+                                subindex = subindex + 1;
+                            }
+                        }
+                    } else {
+                        log(node.tag_name)
+                        node.attr.push(attr)
+                    }
+                });
+            }
+            checkParent(html.child_nodes, tokenAttribute);
         }
+
     }
 
     if (tokens == null) {
@@ -284,153 +309,171 @@ function LexicalAnalizer(tokens = []) {
             for (key in token) {
                 switch (key) {
                     case "symbol":
-                            createElement(token);
+                        createElement(token);
                         break;
                     case "attribution":
-                            addAttribute(token, tokens, index);
+                        addAttribute(token, tokens, index);
                         break;
                     case "string":
-
                         break;
                     case "delimiter":
                         break;
                     case "comment":
                         //verbose to put comments in build
-
                         break;
                 }
             }
         });
-        log(html);
+
         return Parser(html);
     }
+}
+function Parser(html = null) {
 
-    function Parser(html = null) {
-
-        let line;
-        let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
-        let data = [2];
-        data[1] = Array();
-
-        for (key in html) {
-            if (key === "child_nodes") {
-                if (html[key].length > 0) {
-                    html[key].forEach(key => {
-                        //log(key)
-                    });
-                }
-            }
+    let line;
+    let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
+    let data = [2];
+    data[1] = Array();
+    let tag = "";
+    let html_compiled = ""
+    if (Array.isArray(html) !== true) {
+        log(html.tag_name);
+        tag += "<"+html.tag_name;
+        if (html.attr.length > 0) {
+            tag += " ";
+            html.attr.forEach((attribute) => {
+                tag += attribute.name + attribute.sign + attribute.value;
+            });
+            tag += ">";
+        } else {
+            tag += ">";
         }
-        // if (tokens['tag'] !== '--') {
-        //     syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
-        // }
-        //
-        // switch (tokens['tag']) {
-        //
-        //     case '--':
-        //         line = '';
-        //         break;
-        //     case '!DOCTYPE':
-        //         log(chalk.yellowBright("You don't need to implement a DOCTYPE..."));
-        //         line = '';
-        //         break;
-        //     case 'html':
-        //         line = '<!DOCTYPE html>'
-        //         line += '<html>';
-        //         break;
-        //     case 'head':
-        //         line = '<head>'
-        //         line += '<meta charset="utf-8" />'
-        //         line += '<meta name="viewport" content="width=device-width, initial-scale=1" />';
-        //         break;
-        //     case 'closehead':
-        //         line = '</head>';
-        //         break;
-        //     case 'meta':
-        //         line = '<meta ';
-        //         if (tokens.props['keywords'] !== undefined) {
-        //             line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
-        //         } else if (tokens.props['description'] !== undefined) {
-        //             line += 'name="description" content="' + tokens.props['description'] + '"';
-        //         }
-        //         line += ' />';
-        //         break;
-        //     case 'icon':
-        //         line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16" />';
-        //
-        //         files["file"] = 'icon.png';
-        //         files["src"] = formatValue(tokens.props['src']);
-        //         files["folder"] = "ROOT";
-        //         data[1] = files;
-        //         break
-        //     case 'title':
-        //         line = '<title>' + formatValue(tokens.props['value']) + '</title>';
-        //         break;
-        //     case 'style':
-        //         line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
-        //
-        //         if (!tokens.props['src'].match("https://")) {
-        //             files["file"] = 'main.css';
-        //             files["src"] = formatValue(tokens.props['src']);
-        //             files["folder"] = "css";
-        //             data[1] = files;
-        //         }
-        //
-        //         break;
-        //     case 'body':
-        //         line = '<body>';
-        //         break;
-        //     case 'closebody':
-        //         line = '</body>';
-        //         break;
-        //     case 'div':
-        //         line = '<div ';
-        //         for (key in tokens.props) {
-        //             line += key + '=' + tokens.props[key];
-        //         }
-        //         line += '>';
-        //         break;
-        //     case 'closediv':
-        //         line = '</div>';
-        //         break;
-        //     case 'a':
-        //         line = '<a href=' + tokens.props['href'] + ' id=' + tokens.props['id'] + '>' +
-        //             formatValue(tokens.props['value']) + '</a>';
-        //         break;
-        //
-        //     case 'button':
-        //         line = '<button ';
-        //         for (key in tokens.props) {
-        //             if (key !== 'value') line += key + '=' + tokens.props[key];
-        //         }
-        //         line += '>' + formatValue(tokens.props['value']);
-        //         line += '</button>';
-        //         break;
-        //     case 'p':
-        //         line = '<p>' + formatValue(tokens.props['value']) + '</p>';
-        //         break;
-        //     case 'javascript':
-        //         line = '<script src=' + tokens.props['src'] + '></script>';
-        //
-        //         files["file"] = 'main.js';
-        //         files["src"] = formatValue(tokens.props['src']);
-        //         files["folder"] = "js";
-        //         data[1] = files;
-        //
-        //         break;
-        //
-        //     case 'input':
-        //         line = '<input ';
-        //         for (key in tokens.props) {
-        //             line += key + '=' + tokens.props[key];
-        //         }
-        //         line += ' />';
-        //         break;
-        // }
+        html_compiled += tag;
+        Parser(html.child_nodes);
+    } else {
+        log(html.tag_name);
+        html.forEach((element) => {
+            tag += " <"+element.tag_name;
+            if (element.attr.length > 0) {
+                tag += " ";
+                element.attr.forEach((attribute) => {
+                    tag += attribute.name + attribute.sign + attribute.value;
+                });
+                tag += ">";
+            } else {
+                tag += ">";
+            }
+            html_compiled += tag;
+            Parser(element.child_nodes);
+        });
     }
-
-    //data[0] = line;
-    return data;
+    return html_compiled;
+    // if (tokens['tag'] !== '--') {
+    //     syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong
+    // }
+    //
+    // switch (tokens['tag']) {
+    //
+    //     case '--':
+    //         line = '';
+    //         break;
+    //     case '!DOCTYPE':
+    //         log(chalk.yellowBright("You don't need to implement a DOCTYPE..."));
+    //         line = '';
+    //         break;
+    //     case 'html':
+    //         line = '<!DOCTYPE html>'
+    //         line += '<html>';
+    //         break;
+    //     case 'head':
+    //         line = '<head>'
+    //         line += '<meta charset="utf-8" />'
+    //         line += '<meta name="viewport" content="width=device-width, initial-scale=1" />';
+    //         break;
+    //     case 'closehead':
+    //         line = '</head>';
+    //         break;
+    //     case 'meta':
+    //         line = '<meta ';
+    //         if (tokens.props['keywords'] !== undefined) {
+    //             line += 'name="keywords" content="' + tokens.props['keywords'] + '"';
+    //         } else if (tokens.props['description'] !== undefined) {
+    //             line += 'name="description" content="' + tokens.props['description'] + '"';
+    //         }
+    //         line += ' />';
+    //         break;
+    //     case 'icon':
+    //         line = '<link rel="icon" href="' + formatValue(tokens.props['src']) + '" type="image/gif" sizes="16x16" />';
+    //
+    //         files["file"] = 'icon.png';
+    //         files["src"] = formatValue(tokens.props['src']);
+    //         files["folder"] = "ROOT";
+    //         data[1] = files;
+    //         break
+    //     case 'title':
+    //         line = '<title>' + formatValue(tokens.props['value']) + '</title>';
+    //         break;
+    //     case 'style':
+    //         line = '<link rel="stylesheet" href=' + tokens.props['src'] + ' />';
+    //
+    //         if (!tokens.props['src'].match("https://")) {
+    //             files["file"] = 'main.css';
+    //             files["src"] = formatValue(tokens.props['src']);
+    //             files["folder"] = "css";
+    //             data[1] = files;
+    //         }
+    //
+    //         break;
+    //     case 'body':
+    //         line = '<body>';
+    //         break;
+    //     case 'closebody':
+    //         line = '</body>';
+    //         break;
+    //     case 'div':
+    //         line = '<div ';
+    //         for (key in tokens.props) {
+    //             line += key + '=' + tokens.props[key];
+    //         }
+    //         line += '>';
+    //         break;
+    //     case 'closediv':
+    //         line = '</div>';
+    //         break;
+    //     case 'a':
+    //         line = '<a href=' + tokens.props['href'] + ' id=' + tokens.props['id'] + '>' +
+    //             formatValue(tokens.props['value']) + '</a>';
+    //         break;
+    //
+    //     case 'button':
+    //         line = '<button ';
+    //         for (key in tokens.props) {
+    //             if (key !== 'value') line += key + '=' + tokens.props[key];
+    //         }
+    //         line += '>' + formatValue(tokens.props['value']);
+    //         line += '</button>';
+    //         break;
+    //     case 'p':
+    //         line = '<p>' + formatValue(tokens.props['value']) + '</p>';
+    //         break;
+    //     case 'javascript':
+    //         line = '<script src=' + tokens.props['src'] + '></script>';
+    //
+    //         files["file"] = 'main.js';
+    //         files["src"] = formatValue(tokens.props['src']);
+    //         files["folder"] = "js";
+    //         data[1] = files;
+    //
+    //         break;
+    //
+    //     case 'input':
+    //         line = '<input ';
+    //         for (key in tokens.props) {
+    //             line += key + '=' + tokens.props[key];
+    //         }
+    //         line += ' />';
+    //         break;
+    // }
 }
 
 function formatValue(value) {

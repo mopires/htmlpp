@@ -4,9 +4,8 @@ html lang="pt-br"
         // this is amer... a comment
     closehead
     body
-        div class='container' id='main'
+        p class='container' id='main'
             hello world
-        closediv
-        javascript src = "main.js"
+        endp
     closebody
 closehtml
