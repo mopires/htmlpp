@@ -253,10 +253,10 @@ function LexicalAnalizer(tokens = []) {
                 let subindex = 0;
                 function checkParent (chield_nodes, token) {
                     chield_nodes.forEach((node, index) => {
-                        if (node.id != token.parent_id) {
+                        if (node.id !== token.parent_id) {
                             if (index === chield_nodes.length-1){
-                                while (subindex < chield_nodes.length-1) {
-                                    checkParent(chield_nodes[subindex], token);
+                                while (subindex < chield_nodes.length) {
+                                    checkParent(chield_nodes[subindex].child_nodes, token);
                                     subindex = subindex + 1;
                                 }
                             }
@@ -265,6 +265,7 @@ function LexicalAnalizer(tokens = []) {
                         }
                     });
                 }
+                log(element.tag_name + " " + element.parent_id)
                 checkParent(html.child_nodes, element);
             }
         }
@@ -284,15 +285,12 @@ function LexicalAnalizer(tokens = []) {
                 chield_nodes.forEach((node, index) => {
                     if (node.id !== token.parent_id) {
                         if (index === chield_nodes.length-1){
-                            log(subindex , chield_nodes.length-1)
                             while (subindex < chield_nodes.length) {
-                                log(chield_nodes[subindex])
                                 checkParent(chield_nodes[subindex].child_nodes, token);
                                 subindex = subindex + 1;
                             }
                         }
                     } else {
-                        log(node.tag_name)
                         node.attr.push(attr)
                     }
                 });
