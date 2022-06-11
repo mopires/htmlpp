@@ -69,7 +69,12 @@ function compile(file_content, file) {
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
     let html = getTokens(file_content, file);
-    console.log(html)
+    if (!fs.existsSync('./build')) {
+        fs.mkdirSync('./build');
+    }
+    fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html, (e) => {
+        if (e) throw e;
+    });
 }
 
 function getTokens(file_content, file) {
@@ -112,62 +117,94 @@ function getTokens(file_content, file) {
                         "symbol": char_buffer,
                         "column": column,
                         "line": line,
-                        "token_id": token_id,
-                        "parent_id": parent_symbol
                     });
                     char_buffer = "";
-                    parent_symbol = token_id;
                 }
                 nextColumn();
                 break;
-            case os.EOL:
+            case "\n":
                 line = line + 1;
-                if (file_content[column - 1] !== os.EOL || file_content[column - 1] !== " ") {
-                    if (char_buffer.length > 0) {
-                        token_id = tokenId(char_buffer);
+                if (char_buffer.length > 0) {
+                    if (char_buffer.match("close") === null) {
                         syntax_expression.push({
                             "symbol": char_buffer,
                             "column": column,
                             "line": line,
-                            "token_id": token_id,
-                            "parent_id": parent_symbol
                         });
                         char_buffer = "";
-                        parent_symbol = token_id;
+                    } else {
+                        let close_tag = char_buffer.split("close")[1];
+                        syntax_expression.forEach(element => {
+                            if (element.symbol !== undefined) {
+                                if (element.symbol == close_tag) {
+                                    element.close_tag = char_buffer;
+                                }
+                            }
+                        });
+                        syntax_expression.push({
+                            "symbol": char_buffer,
+                            "column": column,
+                            "line": line,
+                        });
+                        char_buffer = ""
                     }
                 }
                 syntax_expression.push({
                     "delimiter": "OPEN_WITH_ENDLINE",
                     "column": column,
                     "line": line,
-                    "token_id": token_id,
-                    "parent_id": parent_symbol
                 });
-                parent_symbol = token_id;
+                nextColumn();
+                break;
+            case "\r":
+                line = line + 1;
+                if (char_buffer.length > 0) {
+                    if (char_buffer.match("close") === null) {
+                        syntax_expression.push({
+                            "symbol": char_buffer,
+                            "column": column,
+                            "line": line,
+                        });
+                        char_buffer = "";
+                    } else {
+                        let close_tag = char_buffer.split("close")[1];
+                        syntax_expression.forEach(element => {
+                            if (element.symbol !== undefined) {
+                                if (element.symbol === close_tag) {
+                                    element.close_tag = char_buffer;
+                                    char_buffer = "";
+                                }
+                            }
+                        })
+                    }
+                }
+                syntax_expression.push({
+                    "delimiter": "OPEN_WITH_ENDLINE",
+                    "column": column,
+                    "line": line,
+                });
                 nextColumn();
                 break;
             case "=":
                 if (char_buffer.length > 0) {
-                    token_id = tokenId(char_buffer);
-                    syntax_expression.push({
-                        "attribution": char_buffer,
-                        "column": column,
-                        "line": line,
-                        "token_id": token_id,
-                        "parent_id": parent_symbol
-                    });
+                    let value = file_content[column + 1];
+                    let close_value_attribute = file_content[column + 1];
+                    nextColumn();
+                    while (true) {
+                        nextColumn();
+                        value += file_content[column];
+                        if (close_value_attribute === file_content[column]) {
+                            break;
+                        }
+                    }
+                    if (!Array.isArray(syntax_expression[syntax_expression.length - 1].attr)) {
+                        syntax_expression[syntax_expression.length - 1].attr = [];
+                    }
+                    syntax_expression[syntax_expression.length - 1].attr.push(char_buffer + "=" + value);
                     char_buffer = "";
                 }
-                syntax_expression.push({
-                    "attribution_sign": file_content[column],
-                    "column": column,
-                    "line": line,
-                    "token_id": "",
-                    "parent_id": parent_symbol
-                });
-                parent_symbol = token_id;
                 nextColumn();
-                break
+                break;
             case "\'":
                 let single_quotes_content = file_content[column];
                 while (true) {
@@ -182,8 +219,6 @@ function getTokens(file_content, file) {
                     "string": single_quotes_content,
                     "column": column,
                     "line": line,
-                    "token_id": token_id,
-                    "parent_id": parent_symbol
                 });
                 nextColumn();
                 break;
@@ -200,8 +235,6 @@ function getTokens(file_content, file) {
                 syntax_expression.push({
                     "string": quotes_content,
                     "column": column,
-                    "token_id": token_id,
-                    "parent_id": parent_symbol
                 });
                 parent_symbol = token_id;
                 nextColumn();
@@ -214,11 +247,8 @@ function getTokens(file_content, file) {
                         "symbol": char_buffer,
                         "column": column,
                         "line": line,
-                        "token_id": token_id,
-                        "parent_id": parent_symbol
                     });
                     char_buffer = "";
-                    parent_symbol = token_id;
                 }
                 nextColumn();
                 break;
@@ -228,143 +258,60 @@ function getTokens(file_content, file) {
 }
 
 function LexicalAnalizer(tokens = []) {
-
-    let html = {};
-
-    function createElement(tokenElement) {
-        let element = {
-            "id": "",
-            "parent_id": "",
-            "tag_name": "",
-            "attr": [],
-            "delimiter": "",
-            "child_nodes": []
-        };
-        element.id = tokenElement.token_id;
-        element.parent_id = tokenElement.parent_id;
-        element.tag_name = tokenElement.symbol;
-        if (Object.entries(html).length === 0) {
-            html = element;
-        } else {
-            //how to insert the child node in its correct parent ?
-            if (html.child_nodes.length === 0) {
-                html.child_nodes.push(element);
-            } else {
-                let subindex = 0;
-                function checkParent (chield_nodes, token) {
-                    chield_nodes.forEach((node, index) => {
-                        if (node.id !== token.parent_id) {
-                            if (index === chield_nodes.length-1){
-                                while (subindex < chield_nodes.length) {
-                                    checkParent(chield_nodes[subindex].child_nodes, token);
-                                    subindex = subindex + 1;
-                                }
-                            }
-                        } else {
-                            node.child_nodes.push(token);
-                        }
-                    });
-                }
-                log(element.tag_name + " " + element.parent_id)
-                checkParent(html.child_nodes, element);
-            }
-        }
-    }
-
-    function addAttribute(tokenAttribute, tokens, index) {
-        let attr = {
-            "name": tokenAttribute.attribution,
-            "sign": "=",
-            "value": tokens[index + 2].string
-        };
-        if (html.id === tokenAttribute.parent_id) {
-            html.attr.push(attr)
-        } else {
-            let subindex = 0;
-            function checkParent (chield_nodes, token) {
-                chield_nodes.forEach((node, index) => {
-                    if (node.id !== token.parent_id) {
-                        if (index === chield_nodes.length-1){
-                            while (subindex < chield_nodes.length) {
-                                checkParent(chield_nodes[subindex].child_nodes, token);
-                                subindex = subindex + 1;
-                            }
-                        }
-                    } else {
-                        node.attr.push(attr)
-                    }
-                });
-            }
-            checkParent(html.child_nodes, tokenAttribute);
-        }
-
-    }
-
     if (tokens == null) {
         return false;
     } else {
-        tokens.forEach((token, index) => {
-            for (key in token) {
-                switch (key) {
-                    case "symbol":
-                        createElement(token);
-                        break;
-                    case "attribution":
-                        addAttribute(token, tokens, index);
-                        break;
-                    case "string":
-                        break;
-                    case "delimiter":
-                        break;
-                    case "comment":
-                        //verbose to put comments in build
-                        break;
-                }
-            }
-        });
-
-        return Parser(html);
+        return Parser(tokens);
     }
 }
+
 function Parser(html = null) {
 
     let line;
     let files = Array(); //this configure the files linked to the document(i.e main.js, main.css)
     let data = [2];
     data[1] = Array();
-    let tag = "";
-    let html_compiled = ""
-    if (Array.isArray(html) !== true) {
-        log(html.tag_name);
-        tag += "<"+html.tag_name;
-        if (html.attr.length > 0) {
-            tag += " ";
-            html.attr.forEach((attribute) => {
-                tag += attribute.name + attribute.sign + attribute.value;
-            });
-            tag += ">";
-        } else {
-            tag += ">";
+    let html_compiled = "<!DOCTYPE html>";
+
+    function processFeature(element) {
+        // A feature is a htmlpp keyword/tag
+        let feature = ["//", "icon", "style", "javascript", element.symbol];
+        let feature_tag = feature.indexOf(element.symbol) > -1 ? feature[feature.indexOf(element.symbol)] : "";
+        let tag = "";
+        switch (feature_tag) {
+            case "close"+element.symbol.replace("close", ""):
+                tag = "</"+element.symbol.replace("close", "")+">" + os.EOL;
+                return tag;
+                break;
+            case "style":
+                tag = "<link rel=\"stylesheet\" "+element.attr+" />" + os.EOL;
+                return tag;
+                break;
+            case "javascript":
+                tag = "<script "+element.attr+"></script>";
+                return tag;
+                break;
+            default:
+                return null;
+                break;
         }
-        html_compiled += tag;
-        Parser(html.child_nodes);
-    } else {
-        log(html.tag_name);
-        html.forEach((element) => {
-            tag += " <"+element.tag_name;
-            if (element.attr.length > 0) {
-                tag += " ";
-                element.attr.forEach((attribute) => {
-                    tag += attribute.name + attribute.sign + attribute.value;
-                });
-                tag += ">";
-            } else {
-                tag += ">";
-            }
-            html_compiled += tag;
-            Parser(element.child_nodes);
-        });
+
     }
+
+    function createElement(element) {
+        let tag = "";
+        if (element.symbol !== "!DOCTYPE") {
+            let attributes = element.attr !== undefined ? element.attr.join(" ") : "";
+            tag = "<" + element.symbol + " " + attributes + ">" + os.EOL;
+            return tag;
+        } else {
+            log(chalk.yellowBright("* You don't need to set !DOCTYPE"));
+        }
+    }
+    html = html.filter(element => element.symbol != undefined);
+    html.forEach((element) => {
+        html_compiled += processFeature(element) != null ? processFeature(element) : createElement(element);
+    });
     return html_compiled;
     // if (tokens['tag'] !== '--') {
     //     syntax.syntax(tokens, line_number); //the process will stop if somenthing is wrong

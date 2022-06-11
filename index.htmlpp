@@ -1,11 +1,12 @@
 html lang="pt-br"
     head
         meta description="This is a page made with html++!"
-        // this is amer... a comment
+        style src="main.css"
     closehead
-    body
+    body class="bg-black"
         p class='container' id='main'
             hello world
-        endp
+        closep
+        javascript src="main.js"
     closebody
 closehtml
