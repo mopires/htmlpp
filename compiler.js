@@ -93,6 +93,27 @@ function getTokens(file_content, file) {
     }
 
     file_content = Array.from(file_content);
+
+    function getAttribute() {
+        if (char_buffer.length > 0) {
+            let value = file_content[column + 1];
+            let close_value_attribute = file_content[column + 1];
+            nextColumn();
+            while (true) {
+                nextColumn();
+                value += file_content[column];
+                if (close_value_attribute === file_content[column]) {
+                    break;
+                }
+            }
+            if (!Array.isArray(syntax_expression[syntax_expression.length - 1].attr)) {
+                syntax_expression[syntax_expression.length - 1].attr = [];
+            }
+            syntax_expression[syntax_expression.length - 1].attr.push(char_buffer + "=" + value);
+            char_buffer = "";
+        }
+    }
+
     while (column < file_content.length) {
         switch (file_content[column]) {
             case "/":
@@ -149,11 +170,6 @@ function getTokens(file_content, file) {
                         char_buffer = ""
                     }
                 }
-                syntax_expression.push({
-                    "delimiter": "OPEN_WITH_ENDLINE",
-                    "column": column,
-                    "line": line,
-                });
                 nextColumn();
                 break;
             case "\r":
@@ -170,39 +186,23 @@ function getTokens(file_content, file) {
                         let close_tag = char_buffer.split("close")[1];
                         syntax_expression.forEach(element => {
                             if (element.symbol !== undefined) {
-                                if (element.symbol === close_tag) {
+                                if (element.symbol == close_tag) {
                                     element.close_tag = char_buffer;
-                                    char_buffer = "";
                                 }
                             }
-                        })
+                        });
+                        syntax_expression.push({
+                            "symbol": char_buffer,
+                            "column": column,
+                            "line": line,
+                        });
+                        char_buffer = ""
                     }
                 }
-                syntax_expression.push({
-                    "delimiter": "OPEN_WITH_ENDLINE",
-                    "column": column,
-                    "line": line,
-                });
                 nextColumn();
                 break;
             case "=":
-                if (char_buffer.length > 0) {
-                    let value = file_content[column + 1];
-                    let close_value_attribute = file_content[column + 1];
-                    nextColumn();
-                    while (true) {
-                        nextColumn();
-                        value += file_content[column];
-                        if (close_value_attribute === file_content[column]) {
-                            break;
-                        }
-                    }
-                    if (!Array.isArray(syntax_expression[syntax_expression.length - 1].attr)) {
-                        syntax_expression[syntax_expression.length - 1].attr = [];
-                    }
-                    syntax_expression[syntax_expression.length - 1].attr.push(char_buffer + "=" + value);
-                    char_buffer = "";
-                }
+                getAttribute();
                 nextColumn();
                 break;
             case "\'":
@@ -279,16 +279,16 @@ function Parser(html = null) {
         let feature_tag = feature.indexOf(element.symbol) > -1 ? feature[feature.indexOf(element.symbol)] : "";
         let tag = "";
         switch (feature_tag) {
-            case "close"+element.symbol.replace("close", ""):
-                tag = "</"+element.symbol.replace("close", "")+">" + os.EOL;
+            case "close" + element.symbol.replace("close", ""):
+                tag = "</" + element.symbol.replace("close", "") + ">" + os.EOL;
                 return tag;
                 break;
             case "style":
-                tag = "<link rel=\"stylesheet\" "+element.attr+" />" + os.EOL;
+                tag = "<link rel=\"stylesheet\" " + element.attr + " />" + os.EOL;
                 return tag;
                 break;
             case "javascript":
-                tag = "<script "+element.attr+"></script>";
+                tag = "<script " + element.attr + "></script>";
                 return tag;
                 break;
             default:
@@ -308,6 +308,7 @@ function Parser(html = null) {
             log(chalk.yellowBright("* You don't need to set !DOCTYPE"));
         }
     }
+
     html = html.filter(element => element.symbol != undefined);
     html.forEach((element) => {
         html_compiled += processFeature(element) != null ? processFeature(element) : createElement(element);
