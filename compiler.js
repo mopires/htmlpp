@@ -254,6 +254,7 @@ function getTokens(file_content, file) {
                 break;
         }
     }
+
     return LexicalAnalizer(syntax_expression);
 }
 

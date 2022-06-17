@@ -1,5 +1,5 @@
 html
-lang="pt-br"
+lang="br"
     head
         meta description="This is a page made with htmlpp!"
         style src="main.css"
@@ -15,14 +15,6 @@ lang="pt-br"
             class='container' id='t2'
             hello world
         closep
-
-
-
-
         javascript src="main.js"
-
-
-
-
     closebody
 closehtml
