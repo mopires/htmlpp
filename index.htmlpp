@@ -1,12 +1,28 @@
-html lang="pt-br"
+html
+lang="pt-br"
     head
-        meta description="This is a page made with html++!"
+        meta description="This is a page made with htmlpp!"
         style src="main.css"
     closehead
     body class="bg-black"
-        p class='container' id='main'
+        input
+            class='container'
+            id='main'
+            placeholder="Digite"
+            type="text"
+            hello world
+         p
+            class='container' id='t2'
             hello world
         closep
+
+
+
+
         javascript src="main.js"
+
+
+
+
     closebody
 closehtml
