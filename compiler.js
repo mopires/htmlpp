@@ -240,26 +240,6 @@ function getTokens(file_content, file) {
                 nextColumn();
                 break;
             case "$":
-                // let free_text = file_content[column];
-                // let column_backup = column;
-                // while (true) {
-                //     nextColumn();
-                //     free_text = free_text + file_content[column];//send to expression
-                //     if (file_content[column] === "$") {
-                //         break;
-                //     } else if (column == file_content.length){
-                //         log(chalk.red(`* Token "$"  was opened in line ${line}, but not closed`));
-                //         process.exit();
-                //     }
-                // }
-                // token_id = tokenId(free_text);
-                // syntax_expression.push({
-                //     "symbol": "$",
-                //     "free_text": free_text.replace("$","").replace("$",""),
-                //     "column": column,
-                //     "line": line,
-                // });
-                // nextColumn();
                 let $var = file_content[column];
                 let column_backup = column;
                 while (true) {

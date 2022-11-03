@@ -1,5 +1,10 @@
 # htmlpp (in development)
+###### Beta comming soon!
 ###### HTML preprocessor
+
+>Soon enough this package will be deprecated and a new one will be 
+> available with a small change in it's name. Don't worry, there will be a warning with more details when it happens.
+> You can keep posted by following <a href='https://github.com/mopires'>@mopires</a> in github.
 
 Modern and semantic way to write html. The concept remains the same, but without the "&lt; > &lt;/>", like <a href='https://github.com/sass/sass'>Sass</a>, but different.
 
@@ -42,42 +47,21 @@ html
 
 You don't need to use special characters to code, only if you want to.
 
-## Supported Tags
+## Feature Tags
 
- Use ``` -- ``` to comment in htmlpp code;
+ Use ``` // ``` to comment in htmlpp code;
  
-```html```
-```head```
 ```closehead```
-```title```
-```meta```
 ```icon```
 ```style```
-```body```
-```closebody```
-```div```
-```closediv```
-```a```
-```button```
-```input type='text'```
-```p```
 ```javascript```
+```$```
 
 The ```style``` and ```javascript``` require only a ```src```.
+The  ```$``` is for declaring variables (for text).
 
 ## Supported Attributes
-
-```charset```
-```keywords```
-```description```
-```class```
-```href```
-```id```
-```label```
-```src``` 
-```value```
-
-The values in the attributes need to be especifield with single quote (src='example').
+All atributes are suported.
 
 ## Meta Tags
 
@@ -112,10 +96,12 @@ To setup the icon of the page you can use ```icon``` tag.
 Linking files to htmlpp is simple:
 
   ```htmlpp
-
       style src='assets/css/main.css'
       javascript src='assets/js/main.js'
-
+  ```
+Even to link an external file:
+```htmlpp
+style href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
   ```
 
 ## Syntax Highlighter Available!
@@ -134,5 +120,9 @@ Installing globally allow you to use the command ```htmlpp```
 
 The file you are writing HTMLPP need to have the extension __.htmlpp__.
 And that's it.
+
+>Soon enough this package will be deprecated and a new one will be
+> available with a small change in it's name. Don't worry, there will be a warning with more details when it happens.
+> You can keep posted by following <a href='https://github.com/mopires'>@mopires</a> in github.
 
 __Enjoy it!__
