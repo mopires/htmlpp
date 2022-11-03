@@ -238,7 +238,53 @@ function getTokens(file_content, file) {
                 });
                 parent_symbol = token_id;
                 nextColumn();
-                break
+                break;
+            case "$":
+                // let free_text = file_content[column];
+                // let column_backup = column;
+                // while (true) {
+                //     nextColumn();
+                //     free_text = free_text + file_content[column];//send to expression
+                //     if (file_content[column] === "$") {
+                //         break;
+                //     } else if (column == file_content.length){
+                //         log(chalk.red(`* Token "$"  was opened in line ${line}, but not closed`));
+                //         process.exit();
+                //     }
+                // }
+                // token_id = tokenId(free_text);
+                // syntax_expression.push({
+                //     "symbol": "$",
+                //     "free_text": free_text.replace("$","").replace("$",""),
+                //     "column": column,
+                //     "line": line,
+                // });
+                // nextColumn();
+                let $var = file_content[column];
+                let column_backup = column;
+                while (true) {
+                    nextColumn();
+                    $var = $var + file_content[column];
+                    if (file_content[column] === " " ||
+                        file_content[column] === "\r" ||
+                        file_content[column] === "\n") {
+                        break;
+                    } else if (file_content[column].match(/[$&+,:;=?@#|'<>.^*()%!-]/)){
+                        console.log(file_content[column])
+                        log(chalk.red(`* Can't use this special chars in variables. At line ${line}`));
+                        process.exit();
+                    }
+                }
+                if (variablesExist($var)) {
+                    syntax_expression.push({
+                        "symbol": "$",
+                        "free_text": getVariableValue($var),
+                        "column": column,
+                        "line": line,
+                    });
+                }
+                break;
+
             default:
                 char_buffer = char_buffer + file_content[column];
                 if (file_content[column + 1] === undefined) {
@@ -276,7 +322,7 @@ function Parser(html = null) {
 
     function processFeature(element) {
         // A feature is a htmlpp keyword/tag
-        let feature = ["//", "icon", "style", "javascript", element.symbol];
+        let feature = ["//", "icon", "style", "javascript", "$", element.symbol];
         let feature_tag = feature.indexOf(element.symbol) > -1 ? feature[feature.indexOf(element.symbol)] : "";
         let tag = "";
         switch (feature_tag) {
@@ -292,6 +338,9 @@ function Parser(html = null) {
                 tag = "<script " + element.attr + "></script>";
                 return tag;
                 break;
+            case "$":
+                return element.free_text.trim();
+                break;
             default:
                 return null;
                 break;
@@ -305,8 +354,6 @@ function Parser(html = null) {
             let attributes = element.attr !== undefined ? element.attr.join(" ") : "";
             tag = "<" + element.symbol + " " + attributes + ">" + os.EOL;
             return tag;
-        } else {
-            log(chalk.yellowBright("* You don't need to set !DOCTYPE"));
         }
     }
 
@@ -469,4 +516,23 @@ function readFile(file) {
     } catch (err) {
         console.log(err);
     }
+}
+
+function variablesExist(variable) {
+    variable = variable.toString().trim().replace("$", "");
+    let variable_file = JSON.parse(readFile("var.json"));
+
+    if (!variable_file[variable]) {
+        log(chalk.red(`* Variable not defined ${chalk.underline(`${variable}`)}`));
+        return false;
+    } else {
+        return true
+    }
+}
+
+function getVariableValue (variable) {
+    variable = variable.toString().trim().replace("$", "");
+    let variable_file = JSON.parse(readFile("var.json"));
+
+    return variable_file[variable];
 }

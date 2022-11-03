@@ -1,20 +1,21 @@
-html
-lang="br"
+html lang="br"
     head
         meta description="This is a page made with htmlpp!"
-        style src="main.css"
+        style href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
     closehead
     body class="bg-black"
         input
-            class='container'
             id='main'
             placeholder="Digite"
             type="text"
-            hello world
-         p
-            class='container' id='t2'
-            hello world
-        closep
+            value="hello world"
+
+        h1 id='text-id'
+            $hello_world
+
+            @
+        closeh1
+
         javascript src="main.js"
     closebody
 closehtml
