@@ -319,7 +319,7 @@ function Parser(html = null) {
                 return tag;
                 break;
             case "$":
-                return element.free_text.trim();
+                return element.free_text.toString().trim();
                 break;
             default:
                 return null;
@@ -514,5 +514,5 @@ function getVariableValue (variable) {
     variable = variable.toString().trim().replace("$", "");
     let variable_file = JSON.parse(readFile("var.json"));
 
-    return variable_file[variable];
+    return variable_file[variable].toString();
 }

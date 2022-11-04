@@ -1,3 +1,6 @@
 {
-  "hello_world": "Hello world!"
+  "hero": "HTMLPP",
+  "description": "Modern way to write html. The concept remains the same, but without the \"< > </>\". It's like Sass, but different.",
+  "about": "HTMLpp is a HTML preprocessor.",
+  "age": 27
 }

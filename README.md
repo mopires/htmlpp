@@ -12,36 +12,64 @@ Modern and semantic way to write html. The concept remains the same, but without
 
 HTML
 ```html
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta description="This is a page made with html++!">
-        <!-- this is amer... a comment -->
-    </head>
-    <body>
-        <div class="container" id="main">
-            hello world
+ <!DOCTYPE html>
+<html lang="br">
+<head>
+    <meta description="This is a page made with htmlpp!">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"/>
+</head>
+<body class="bg-dark">
+<main class="container pt-3">
+    <div class="row">
+        <div class="col text-white">
+            <h1>HTMLPP</h1>
         </div>
-        <script src="main.js"></script>
-    </body>
+    </div>
+    <div class="row text-white">
+        <p>
+            Modern way to write html. The concept remains the same, but without the "< > </>". It's like Sass, but
+        different.
+        </p>
+        <div class="col">
+            <p id='about'>
+                HTMLpp is a HTML preprocessor.
+            </p>
+        </div>
+    </div>
+</main>
+</body>
 </html>
-      
+
 ```
 
 HTMLPP
 ```htmlpp
-html
+html lang="en"
     head
-        meta description="This is a page made with html++!"
-        // this is amer... a comment
+        meta description="This is a page made with htmlpp!"
+        style href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
     closehead
-    body
-        div class='container' id='main'
-            hello world
-        closediv
-        javascript src= "main.js"
+    body class="bg-dark"
+        main class="container pt-3"
+            div class="row"
+                div class="col text-white"
+                    h1 $hero closeh1
+                closediv
+            closediv
+            div class="row text-white"
+                p
+                    $description
+                closep
+
+                div class="col"
+                    p id='about'
+                        $about
+                    closep
+                closediv
+            closediv
+        closemain
     closebody
+closehtml
    
 ```
 
@@ -90,6 +118,26 @@ To setup the icon of the page you can use ```icon``` tag.
 
 > icon href='myicon.png'
 
+## Variables
+To use variables, you need to create a file called var.json in the root of 
+your project and introduce all your variables in there.
+
+````json
+{
+  "hello_world": "Hello world!",
+  "my_name_is": "Giovani Giorgio",
+  "but_everybody_calls_me": "Giorgio",
+  "age": 27
+}
+````
+
+To call a variable in a htmlpp file it's simple. 
+
+>$hello_world
+> 
+> $my_name_is
+
+Variables require a $ to be interpreted as a variable. 
 
 ## Link files
 
