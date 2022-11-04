@@ -1,4 +1,4 @@
-#!/home/matheus-pires/.nvm/versions/node/
+
 
 const fs = require('fs');
 
