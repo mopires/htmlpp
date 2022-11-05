@@ -4,6 +4,7 @@ issues
 ./idea
 ./vscode
 src/
-.htmlpp
+*.htmlpp
+var.json
 main.js
 package-lock.json
