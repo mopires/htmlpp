@@ -3,8 +3,8 @@ public/
 issues
 ./idea
 ./vscode
-src/
 *.htmlpp
 var.json
 main.js
 package-lock.json
+/src/
