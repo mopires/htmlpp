@@ -71,7 +71,7 @@ function compile(file_content, file) {
     if (!fs.existsSync('./public')) {
         fs.mkdirSync('./public');
     }
-    fs.writeFileSync('./public/' + file.path + swipeExtension(file.name), html, (e) => {
+    fs.writeFileSync(file.path.replace("src", "public") + swipeExtension(file.name), html, (e) => {
         if (e) throw e;
     })
     log(chalk.greenBright("Done."));
@@ -454,7 +454,7 @@ function formatValue(value) {
     return value.replace("'", "").replace("'", "");
 }
 
-function getFiles(subfolder = "./src/", htmlpp_files = []) {
+function getFiles(subfolder = process.cwd() + "/src/", htmlpp_files = []) {
     let folders;
     let path = subfolder;
     folders = fs.readdirSync(path);
@@ -500,7 +500,7 @@ function readFile(file) {
 
 function variablesExist(variable) {
     variable = variable.toString().trim().replace("$", "");
-    let variable_file = JSON.parse(readFile("var.json"));
+    let variable_file = JSON.parse(readFile(process.cwd()+"/src/var.json"));
 
     if (!variable_file[variable]) {
         log(chalk.red(`* Variable not defined ${chalk.underline(`${variable}`)}`));
@@ -512,7 +512,7 @@ function variablesExist(variable) {
 
 function getVariableValue (variable) {
     variable = variable.toString().trim().replace("$", "");
-    let variable_file = JSON.parse(readFile("var.json"));
+    let variable_file = JSON.parse(readFile(process.cwd()+"/src/var.json"));
 
     return variable_file[variable].toString();
 }
