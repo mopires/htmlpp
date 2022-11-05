@@ -21,6 +21,18 @@ html lang="en"
                     closep
                 closediv
             closediv
+            div class="row text-white bg-info"
+                p
+                    "To write text without variables use quotes. "
+                    "Single quotes or normal quotes"
+                closep
+
+                div class="col"
+                    p id='about'
+
+                    closep
+                closediv
+            closediv
         closemain
     closebody
 closehtml

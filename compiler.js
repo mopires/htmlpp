@@ -216,9 +216,9 @@ function getTokens(file_content, file) {
                 }
                 token_id = tokenId(char_buffer);
                 syntax_expression.push({
+                    "symbol": "string",
                     "string": single_quotes_content,
                     "column": column,
-                    "line": line,
                 });
                 nextColumn();
                 break;
@@ -233,6 +233,7 @@ function getTokens(file_content, file) {
                 }
                 token_id = tokenId(char_buffer);
                 syntax_expression.push({
+                    "symbol": "string",
                     "string": quotes_content,
                     "column": column,
                 });
@@ -280,7 +281,6 @@ function getTokens(file_content, file) {
                 break;
         }
     }
-
     return LexicalAnalizer(syntax_expression);
 }
 
@@ -307,7 +307,7 @@ function Parser(html = null) {
         let tag = "";
         switch (feature_tag) {
             case "close" + element.symbol.replace("close", ""):
-                tag = "</" + element.symbol.replace("close", "") + ">" + os.EOL;
+                tag = os.EOL + "</" + element.symbol.replace("close", "") + ">";
                 return tag;
                 break;
             case "style":
@@ -320,6 +320,13 @@ function Parser(html = null) {
                 break;
             case "$":
                 return element.free_text.toString().trim();
+                break;
+            case "string":
+                return element.string.toString()
+                    .replace("\"", "")
+                    .replace("\"", "")
+                    .replace("\'", "")
+                    .replace("\'", "");
                 break;
             default:
                 return null;
@@ -337,7 +344,7 @@ function Parser(html = null) {
         }
     }
 
-    html = html.filter(element => element.symbol != undefined);
+    html = html.filter(element => element.symbol != undefined || element.string != undefined);
     html.forEach((element) => {
         html_compiled += processFeature(element) != null ? processFeature(element) : createElement(element);
     });
