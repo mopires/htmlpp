@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-
 const fs = require('fs'), readline = require('readline'), chalk = require('chalk'), os = require("os");
 
 const syntax = require('./syntax/syntax.js');
 const log = console.log;
-
-console.log(chalk.greenBright("Compiling... \n"));
+console.log(chalk.greenBright("Compiling..."));
 let htmlpp_files = getFiles();
 let expression = [], syntax_expression = [];
 htmlpp_files.forEach((file) => {
@@ -74,7 +72,8 @@ function compile(file_content, file) {
     }
     fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html, (e) => {
         if (e) throw e;
-    });
+    })
+    log(chalk.greenBright("Done."));
 }
 
 function getTokens(file_content, file) {

@@ -1,13 +1,13 @@
 {
   "name": "htmlpp-com-github-mopires",
-  "version": "2.1.0",
+  "version": "2.1.12",
   "description": "Modern html transpiler",
   "main": "compiler.js",
   "bin": {
     "htmlpp": "./compiler.js"
   },
   "scripts": {
-    "postinstall" : "node ./get-started.js"
+    "postinstall" : "./get-started.js"
   },
   "author": "Matheus Pires",
   "license": "ISC",
