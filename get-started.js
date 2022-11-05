@@ -29,7 +29,7 @@ const htmlpp = "html lang=\"en\"\n" +
     "    closebody\n" +
     "closehtml";
 
-const variables = "{\n \"hero\": \"HTMLPP\",\n\"description\": \"Modern way to write html. The concept remains the same, but without the \" \< \> \< \/\>\". It's like Sass, but different.\",\n\"about\": \"HTMLpp is a HTML preprocessor.\",\n\"age\": 27}\"";
+const variables = "{\n \"hero\": \"HTMLPP\",\n\"description\": \"Modern way to write html. The concept remains the same, but without the \" \< \> \< \/\>\". It's like Sass, but different.\",\n\"about\": \"HTMLpp is a HTML preprocessor.\",\n\"age\": 27\n}";
 
 if (!fs.existsSync("../../src")) {
     fs.mkdirSync("../../src");
