@@ -19,7 +19,12 @@
     "sass",
     "preprocessor",
     "style",
-    "clean code"
+    "clean code",
+    "design",
+    "html5",
+    "transpiler",
+    "frontend development",
+    "scss"
   ],
   "repository": "https://github.com/mopires/htmlpp",
   "devDependencies": {
