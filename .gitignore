@@ -8,3 +8,4 @@ var.json
 main.js
 package-lock.json
 /src/
+/src/*.*
