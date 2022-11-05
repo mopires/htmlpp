@@ -88,6 +88,12 @@ You don't need to use special characters to code, only if you want to.
 The ```style``` and ```javascript``` require only a ```src```.
 The  ```$``` is for declaring variables (for text).
 
+## Text
+To write free text use quotes.
+
+![free-text.png](free-text.png)
+
+
 ## Supported Attributes
 All atributes are suported.
 
