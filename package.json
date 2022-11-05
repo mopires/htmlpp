@@ -1,6 +1,6 @@
 {
   "name": "htmlpp-com-github-mopires",
-  "version": "2.1.17",
+  "version": "2.1.18",
   "description": "Modern html transpiler",
   "main": "compiler.js",
   "bin": {
