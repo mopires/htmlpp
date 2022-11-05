@@ -454,7 +454,7 @@ function formatValue(value) {
     return value.replace("'", "").replace("'", "");
 }
 
-function getFiles(subfolder = "./", htmlpp_files = []) {
+function getFiles(subfolder = "./src/", htmlpp_files = []) {
     let folders;
     let path = subfolder;
     folders = fs.readdirSync(path);
