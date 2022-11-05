@@ -31,10 +31,14 @@ const htmlpp = "html lang=\"en\"\n" +
 
 const variables = "{\n \"hero\": \"HTMLPP\",\n\"description\": \"Modern way to write html. The concept remains the same, but without the \" \< \> \< \/\>\". It's like Sass, but different.\",\n\"about\": \"HTMLpp is a HTML preprocessor.\",\n\"age\": 27}\"";
 
-fs.writeFileSync("../../index.htmlpp", htmlpp, (e) => {
+if (!fs.existsSync("../../src")) {
+    fs.mkdirSync("../../src");
+}
+
+fs.writeFileSync("../../src/index.htmlpp", htmlpp, (e) => {
     if (e) throw e;
 });
 
-fs.writeFileSync("../../var.json", variables, (e) => {
+fs.writeFileSync("../../src/var.json", variables, (e) => {
     if (e) throw e;
 });

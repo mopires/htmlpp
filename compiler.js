@@ -67,10 +67,11 @@ function compile(file_content, file) {
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
     let html = getTokens(file_content, file);
-    if (!fs.existsSync('./build')) {
-        fs.mkdirSync('./build');
+
+    if (!fs.existsSync('./public')) {
+        fs.mkdirSync('./public');
     }
-    fs.writeFileSync('./build/' + file.path + swipeExtension(file.name), html, (e) => {
+    fs.writeFileSync('./public/' + file.path + swipeExtension(file.name), html, (e) => {
         if (e) throw e;
     })
     log(chalk.greenBright("Done."));
@@ -473,7 +474,7 @@ function getFiles(subfolder = "./", htmlpp_files = []) {
 }
 
 function isReservedFolder(folder) {
-    let protected_dir = [".git", ".github", ".idea", "build", "syntax", "node_modules"];
+    let protected_dir = [".git", ".github", ".idea", "public", "syntax", "node_modules"];
     return protected_dir.indexOf(folder) !== -1;
 }
 
