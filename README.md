@@ -173,4 +173,8 @@ And that's it.
 > available with a small change in it's name. Don't worry, there will be a warning with more details when it happens.
 > You can keep posted by following <a href='https://github.com/mopires'>@mopires</a> in github.
 
+Want to give extra help?
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J521CN9)
+
 __Enjoy it!__
