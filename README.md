@@ -79,12 +79,12 @@ You don't need to use special characters to code, only if you want to.
 
  Use ``` // ``` to comment in htmlpp code;
  
-```closehead```
+```close```
 ```icon```
 ```style```
 ```javascript```
 ```$```
-
+The ```close + tag``` is for closing a tag (Ex. closeh1);
 The ```style``` and ```javascript``` require only a ```src```.
 The  ```$``` is for declaring variables (for text).
 
