@@ -66,7 +66,8 @@ function compile(file_content, file) {
     //     });
     //     log(chalk.green(file.path + file.name + " compiled *SUCCESSFULLY*"));
     // });
-    let html = getTokens(file_content, file);
+    var html = "";
+        html = getTokens(file_content, file);
 
     if (!fs.existsSync('./public')) {
         fs.mkdirSync('./public');
@@ -128,6 +129,9 @@ function getTokens(file_content, file) {
                         }
                     }
                     syntax_expression.push({"comment": comment, "column": column, "line": line});
+                    nextColumn();
+                } else {
+                    char_buffer += file_content[column];
                     nextColumn();
                 }
                 break;
@@ -251,7 +255,6 @@ function getTokens(file_content, file) {
                         file_content[column] === "\n") {
                         break;
                     } else if (file_content[column].match(/[$&+,:;=?@#|'<>.^*()%!-]/)){
-                        console.log(file_content[column])
                         log(chalk.red(`* Can't use this special chars in variables. At line ${line}`));
                         process.exit();
                     }
@@ -308,6 +311,10 @@ function Parser(html = null) {
         switch (feature_tag) {
             case "close" + element.symbol.replace("close", ""):
                 tag = os.EOL + "</" + element.symbol.replace("close", "") + ">";
+                return tag;
+                break;
+            case "/" + element.symbol:
+                tag = os.EOL + "</" + element.symbol + ">";
                 return tag;
                 break;
             case "style":
