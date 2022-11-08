@@ -183,4 +183,6 @@ Want to give extra help?
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J521CN9)
 
+<img src="https://img.shields.io/liberapay/gives/mopires.svg?logo=liberapay">
+
 __Enjoy it!__
